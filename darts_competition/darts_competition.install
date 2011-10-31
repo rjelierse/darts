@@ -1,0 +1,200 @@
+<?php
+/**
+ * Darts competition module: installation functions.
+ */
+
+function darts_competition_install() {
+    drupal_install_schema('darts_competition');
+}
+
+function darts_competition_uninstall() {
+    drupal_uninstall_schema('darts_competition');
+
+    // Remove variables
+    variable_del('darts_competition_result_best_of');
+}
+
+function darts_competition_schema() {
+    return array(
+        'darts_competition_results' => array(
+            'description' => 'All matches played in the competition.',
+            'fields' => array(
+                'result_id' => array(
+                    'description' => 'Unique ID to identify the result in the system.',
+                    'type' => 'serial',
+                    'unsigned' => true,
+                    'not null' => false
+                ),
+                'result_date' => array(
+                    'description' => 'UNIX timestamp for when the match was played.',
+                    'type' => 'int',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'home_uid' => array(
+                    'description' => 'The {users}.uid of the first player.',
+                    'type' => 'int',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'home_legs' => array(
+                    'description' => 'The amount of legs that were won by the player.',
+                    'type' => 'int',
+                    'size' => 'small',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'away_uid' => array(
+                    'description' => 'The {users}.uid of the second player.',
+                    'type' => 'int',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'away_legs' => array(
+                    'description' => 'The amount of legs that were won by the player.',
+                    'type' => 'int',
+                    'size' => 'small',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                )
+            ),
+            'primary key' => array('result_id')
+        ),
+        'darts_competition_result_stats' => array(
+            'description' => 'Global player statistics for a certain result.',
+            'fields' => array(
+                'result_id' => array(
+                    'description' => 'The {darts_competition_results}.result_id to identify the result.',
+                    'type' => 'int',
+                    'unsigned' => true,
+                    'not null' => false,
+                    'default' => 0,
+                ),
+                'uid' => array(
+                    'description' => 'The {users}.uid to identify the player.',
+                    'type' => 'int',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'throw_180' => array(
+                    'description' => 'The amount of throws that equalled 180 points.',
+                    'type' => 'int',
+                    'size' => 'small',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'throw_140' => array(
+                    'description' => 'The amount of throws that equalled 140 points or more.',
+                    'type' => 'int',
+                    'size' => 'small',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'throw_100' => array(
+                    'description' => 'The amount of throws that equalled 100 points or more.',
+                    'type' => 'int',
+                    'size' => 'small',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                )
+            ),
+            'primary key' => array('result_id', 'uid')
+        ),
+        'darts_competition_result_unique_stats' => array(
+            'description' => 'Unique player statistics for a certain result.',
+            'fields' => array(
+                'stat_id' => array(
+                    'description' => 'Unique ID to identify the statistic in the system.',
+                    'type' => 'serial',
+                    'unsigned' => true,
+                    'not null' => true,
+                ),
+                'result_id' => array(
+                    'description' => 'The {darts_competition_results}.result_id to identify the result.',
+                    'type' => 'int',
+                    'unsigned' => true,
+                    'not null' => false,
+                    'default' => 0,
+                ),
+                'uid' => array(
+                    'description' => 'The {users}.uid to identify the player.',
+                    'type' => 'int',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'stat_type' => array(
+                    'description' => 'The type of statistic recorded.',
+                    'type' => 'int',
+                    'size' => 'small',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'stat_value' => array(
+                    'description' => 'The value of the recorded statistic.',
+                    'type' => 'int',
+                    'size' => 'small',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                )
+            ),
+            'primary key' => array('stat_id')
+        ),
+        'darts_competition_ranking' => array(
+            'description' => 'Ranking for the competition, based on the results from {darts_competition_results}',
+            'fields' => array(
+                'uid' => array(
+                    'description' => 'The {users}.uid to identify the player.',
+                    'type' => 'int',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'games_played' => array(
+                    'description' => 'The total amount of games played by the player.',
+                    'type' => 'int',
+                    'size' => 'small',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'games_won' => array(
+                    'description' => 'The total amount of games won by the player.',
+                    'type' => 'int',
+                    'size' => 'small',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'legs_played' => array(
+                    'description' => 'The total amount of legs played by the player.',
+                    'type' => 'int',
+                    'size' => 'small',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'legs_won' => array(
+                    'description' => 'The total amount of legs won by the player.',
+                    'type' => 'int',
+                    'size' => 'small',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                )
+            ),
+            'primary key' => array('uid')
+        ),
+    );
+}

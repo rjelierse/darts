@@ -1,0 +1,195 @@
+<?php
+/**
+ * Darts DONHN competition module: Installation functions.
+ */
+
+function darts_donhn_install() {
+    drupal_install_schema('darts_donhn');
+}
+
+function darts_donhn_uninstall() {
+    drupal_uninstall_schema('darts_donhn');
+    cache_clear_all('darts_donhn_', 'cache', TRUE);
+}
+
+function darts_donhn_schema() {
+    return array(
+        'darts_donhn_teams' => array(
+            'description' => 'Teams participating in a DONHN competition',
+            'fields' => array(
+                'team_id' => array(
+                    'description' => 'Unique ID to identify the team in the system.',
+                    'type' => 'serial',
+                    'unsigned' => true,
+                    'not null' => true,
+                ),
+                'team_name' => array(
+                    'description' => 'The human identifiable name of the team.',
+                    'type' => 'varchar',
+                    'length' => 128,
+                    'not null' => true
+                ),
+                'division' => array(
+                    'description' => 'The DONHN division in which the team plays.',
+                    'type' => 'varchar',
+                    'length' => 32,
+                    'not null' => true
+                ),
+                'captain_uid' => array(
+                    'description' => 'The {users}.uid of the team captain.',
+                    'type' => 'int',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'captain_mail' => array(
+                    'description' => 'E-Mail address of the captain.',
+                    'type' => 'varchar',
+                    'length' => 128,
+                    'not null' => true
+                ),
+                'captain_phone' => array(
+                    'description' => 'Telephone number of the captain.',
+                    'type' => 'varchar',
+                    'length' => 10,
+                    'not null' => true
+                ),
+                'location_name' => array(
+                    'description' => 'Name of the location where the team plays its home matches.',
+                    'type' => 'varchar',
+                    'length' => 128,
+                    'not null' => true
+                ),
+                'location_address' => array(
+                    'description' => 'Address of the location.',
+                    'type' => 'varchar',
+                    'length' => 128,
+                    'not null' => true
+                ),
+                'location_city' => array(
+                    'description' => 'City of the location.',
+                    'type' => 'varchar',
+                    'length' => 128,
+                    'not null' => true
+                ),
+                'location_phone' => array(
+                    'description' => 'Telephone number of the location.',
+                    'type' => 'varchar',
+                    'length' => 10,
+                    'not null' => false,
+                    'default' => null
+                )
+            ),
+            'primary key' => array('team_id'),
+            'unique keys' => array('captain' => array('captain_uid'))
+        ),
+        'darts_donhn_team_players' => array(
+            'description' => 'Mapping to establish which player is in which team.',
+            'fields' => array(
+                'team_id' => array(
+                    'description' => 'The {darts_donhn_teams}.team_id of the team.',
+                    'type' => 'int',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'uid' => array(
+                    'description' => 'The {users}.uid of player.',
+                    'type' => 'int',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+            ),
+            'primary key' => array('team_id', 'uid')
+        ),
+        'darts_donhn_results' => array(
+            'description' => 'Results for teams participating in a DONHN competition',
+            'fields' => array(
+                'result_id' => array(
+                    'description' => 'Unique ID to identify the result in the system.',
+                    'type' => 'serial',
+                    'unsigned' => true,
+                    'not null' => true,
+                ),
+                'result_date' => array(
+                    'description' => 'UNIX timestamp for when the match was played.',
+                    'type' => 'int',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'team_id' => array(
+                    'description' => 'The {darts_donhn_teams}.team_id of the team.',
+                    'type' => 'int',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'team_score' => array(
+                    'description' => 'The score for the team.',
+                    'type' => 'int',
+                    'size' => 'small',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'opponent_name' => array(
+                    'description' => 'The name of the opposing team.',
+                    'type' => 'varchar',
+                    'length' => 128,
+                    'not null' => true
+                ),
+                'opponent_score' => array(
+                    'description' => 'The score for the opposing team.',
+                    'type' => 'int',
+                    'size' => 'small',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'result_type' => array(
+                    'description' => 'The type of result. Indicates whether this is a home or away result.',
+                    'type' => 'int',
+                    'size' => 'small',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                )
+            ),
+            'primary key' => array('result_id')
+        ),
+        'darts_donhn_result_stats' => array(
+            'description' => 'Player statistics for a {darts_donhn_results} entry.',
+            'fields' => array(
+                'result_id' => array(
+                    'description' => 'The {darts_donhn_results}.result_id for the result.',
+                    'type' => 'int',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'team_id' => array(
+                    'description' => 'The {darts_donhn_teams}.team_id of the team.',
+                    'type' => 'int',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+                'uid' => array(
+                    'description' => 'The {users}.uid of player.',
+                    'type' => 'int',
+                    'unsigned' => true,
+                    'not null' => true,
+                    'default' => 0
+                ),
+            ),
+            'primary key' => array('result_id'),
+            'unique' => array('player_stat' => array('result_id', 'uid'))
+        )
+    );
+}
+
+function darts_donhn_update_6000 () {
+    drupal_install_schema('darts_donhn');
+}

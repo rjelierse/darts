@@ -1,0 +1,5 @@
+name = Support functions
+description = Manage the Darts module and its subpackages
+core = 6.x
+version = 6.x-1.0
+package = Darts

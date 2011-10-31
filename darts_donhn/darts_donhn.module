@@ -1,0 +1,536 @@
+<?php
+/**
+ * Darts DONHN competition module.
+ */
+
+/**
+ * Identify the result as a home result.
+ */
+define('DARTS_DONHN_RESULT_HOME', 1);
+
+/**
+ * Identify the result as an away result.
+ */
+define('DARTS_DONHN_RESULT_AWAY', 2);
+
+/**
+ * Implementation of hook_menu().
+ */
+function darts_donhn_menu() {
+    return array(
+        'darts/donhn' => array(
+            'title' => 'DONHN competition',
+            'description' => 'View the teams that are active in the DONHN competition.',
+            'access arguments' => array('access content'),
+            'file' => 'darts_donhn.pages.inc',
+            'page callback' => 'darts_donhn_teams',
+            'type' => MENU_CALLBACK
+        ),
+        'darts/donhn/%darts_donhn_team' => array(
+            'title' => 'Team information',
+            'title callback' => 'darts_donhn_team_page_title',
+            'title arguments' => array(2),
+            'access arguments' => array('access content'),
+            'file' => 'darts_donhn.pages.inc',
+            'page callback' => 'darts_donhn_team_results',
+            'page arguments' => array(2),
+            'type' => MENU_CALLBACK
+        ),
+        'darts/donhn/%darts_donhn_team/results' => array(
+            'title' => 'Results',
+            'description' => 'View the team results.',
+            'access arguments' => array('access content'),
+            'file' => 'darts_donhn.pages.inc',
+            'page callback' => 'darts_donhn_team_results',
+            'page arguments' => array(2),
+            'type' => MENU_DEFAULT_LOCAL_TASK,
+            'weight' => 0
+        ),
+        'darts/donhn/%darts_donhn_team/information' => array(
+            'title' => 'Information',
+            'description' => 'View information on the team: who is the captain, where do they play, etc.',
+            'access arguments' => array('access content'),
+            'file' => 'darts_donhn.pages.inc',
+            'page callback' => 'darts_donhn_team_information',
+            'page arguments' => array(2),
+            'type' => MENU_LOCAL_TASK,
+            'weight' => 1
+        ),
+//        'darts/donhn/%darts_donhn_team/statistics' => array(
+//            'title' => 'Statistics',
+//            'description' => 'View team statistics.',
+//            'access arguments' => array('access content'),
+//            'file' => 'darts_donhn.pages.inc',
+//            'page callback' => 'darts_donhn_team_statistics',
+//            'page arguments' => array(2),
+//            'type' => MENU_LOCAL_TASK,
+//            'weight' => 1
+//        ),
+        'darts/donhn/%darts_donhn_team/edit' => array(
+            'title' => 'Edit',
+            'description' => 'Edit the team details.',
+            'access callback' => 'user_can_edit_donhn_team',
+            'access arguments' => array(2),
+            'file' => 'darts_donhn.admin.inc',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('darts_donhn_team_edit', 2),
+            'type' => MENU_LOCAL_TASK,
+            'weight' => 2
+        ),
+        'darts/donhn/%darts_donhn_team/edit/information' => array(
+            'title' => 'Edit information',
+            'type' => MENU_DEFAULT_LOCAL_TASK,
+            'weight' => -50
+        ),
+        'darts/donhn/%darts_donhn_team/results/add' => array(
+            'title' => 'Add result',
+            'description' => 'Add a competition result for this team.',
+            'access callback' => 'user_can_edit_donhn_team',
+            'access arguments' => array(2),
+            'file' => 'darts_donhn.admin.inc',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('darts_donhn_result_edit', 2),
+            'type' => MENU_LOCAL_TASK,
+            'weight' => 3,
+            'tab_parent' => 'darts/donhn/%/edit',
+            'tab_root' => 'darts/donhn/%'
+        ),
+        'darts/donhn/%darts_donhn_team/results/%darts_donhn_result' => array(
+            'title' => 'Result information',
+            'title callback' => 'darts_donhn_result_page_title',
+            'title arguments' => array(2, 4),
+            'access arguments' => array('access content'),
+            'file' => 'darts_donhn.pages.inc',
+            'page callback' => 'theme',
+            'page arguments' => array('darts_donhn_result', 2, 4)
+        ),
+        'darts/donhn/%darts_donhn_team/results/%darts_donhn_result/view' => array(
+            'title' => 'View',
+            'description' => 'View the details of the result.',
+            'type' => MENU_DEFAULT_LOCAL_TASK,
+            'weight' => 0
+        ),
+        'darts/donhn/%darts_donhn_team/results/%darts_donhn_result/edit' => array(
+            'title' => 'Edit',
+            'description' => 'Edit the result details.',
+            'access callback' => 'user_can_edit_donhn_team',
+            'access arguments' => array(2),
+            'file' => 'darts_donhn.admin.inc',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('darts_donhn_result_edit', 2, 4),
+            'type' => MENU_LOCAL_TASK,
+            'weight' => 1
+        ),
+        'admin/darts/donhn' => array(
+            'title' => 'DONHN competition',
+            'description' => 'Administer the DONHN competition',
+            'access arguments' => array('administer donhn competition'),
+            'file' => 'darts_donhn.admin.inc',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('darts_donhn_admin_settings'),
+            'weight' => -30
+        ),
+        'admin/darts/donhn/settings' => array(
+            'title' => 'Settings',
+            'description' => 'Administer settings related to the DONHN competition.',
+            'type' => MENU_DEFAULT_LOCAL_TASK,
+            'weight' => -50
+        ),
+        'admin/darts/donhn/teams' => array(
+            'title' => 'Teams',
+            'description' => 'Manage the teams that are active in a DONHN competition.',
+            'access arguments' => array('administer donhn competition'),
+            'file' => 'darts_donhn.admin.inc',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('darts_donhn_admin_teams'),
+            'type' => MENU_LOCAL_TASK,
+            'weight' => -40
+        ),
+        'admin/darts/donhn/teams/list' => array(
+            'title' => 'List',
+            'type' => MENU_DEFAULT_LOCAL_TASK,
+            'weight' => -50
+        ),
+        'admin/darts/donhn/teams/add' => array(
+            'title' => 'Add',
+            'description' => 'Add a new team that is active in a DONHN competition.',
+            'access arguments' => array('administer donhn competition'),
+            'file' => 'darts_donhn.admin.inc',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('darts_donhn_team_edit'),
+            'type' => MENU_LOCAL_TASK,
+            'weight' => -40
+        ),
+        'admin/darts/donhn/reset' => array(
+            'title' => 'Reset DONHN competition',
+            'access arguments' => array('administer donhn competition'),
+            'file' => 'darts_donhn.admin.inc',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('darts_donhn_competition_confirm_reset'),
+            'type' => MENU_CALLBACK
+        )
+    );
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function darts_donhn_theme() {
+    return array(
+        'darts_donhn_admin_teams' => array(
+            'arguments' => array('form' => null),
+            'file' => 'darts_donhn.admin.inc'
+        ),
+        'darts_donhn_result' => array(
+            'arguments' => array('team' => null, 'result' => null),
+            'template' => 'darts-donhn-result',
+            'path' => drupal_get_path('module', 'darts_donhn').'/templates',
+            'file' => '../darts_donhn.theme.inc'
+        )
+    );
+}
+
+/**
+ * Implementation of hook_perm().
+ */
+function darts_donhn_perm() {
+    return array(
+        'edit own donhn team',
+        'administer donhn competition'
+    );
+}
+
+/**
+ * Implementation of hook_block().
+ */
+function darts_donhn_block($op = 'list', $delta = 0, $edit = array()) {
+    switch ($op) {
+        case 'list':
+            return array(
+                'results' => array(
+                    'info' => t('DONHN: latest result per team.'),
+                    'cache' => BLOCK_CACHE_GLOBAL
+                )
+            );
+        case 'view':
+            $function = 'darts_donhn_block_'.$delta;
+            if (function_exists($function)) {
+                return $function();
+            }
+            return false;
+    }
+}
+
+/**
+ * Build the DONHN result block.
+ *
+ * This block contains the latest result for each team.
+ *
+ * @return array The block.
+ */
+function darts_donhn_block_results() {
+    $block = array(
+        'subject' => t('Latest results'),
+        'content' => t('No teams found.')
+    );
+
+    $data = db_query('SELECT t.team_id, t.team_name
+                      FROM {darts_donhn_teams} t
+                      GROUP BY t.team_id
+                      ORDER BY t.division DESC, t.team_id ASC');
+    if ($data === false) {
+        return $block;
+    }
+
+    $items = array();
+    while(($team = db_fetch_array($data)) !== false) {
+        $result = db_fetch_array(db_query('SELECT * FROM {darts_donhn_results} WHERE team_id = %d ORDER BY result_date DESC LIMIT 0,1', $team['team_id']));
+        $path = 'darts/donhn/'.$team['team_id'];
+        if ($result === false) {
+            $content = t('No results found.');
+        }
+        else {
+            $content = t('@date: @score !result against @opponent', array(
+                '@date' => format_date($result['result_date'], 'custom', 'd-m'),
+                '@score' => $result['team_score'].'-'.$result['opponent_score'],
+                '!result' => ($result['team_score'] > $result['opponent_score']) ? t('win') : t('loss'),
+                '@opponent' => $result['opponent_name'],
+            ));
+        }
+        $item = array(
+            '#title' => l($team['team_name'], $path),
+            '#value' => $content
+        );
+        $items[] = theme('user_profile_item', $item);
+    }
+
+    if (!empty($items)) {
+        $block['content'] = '<dl class="result-list">'.implode('', $items).'</dl>';
+    }
+
+    return $block;
+}
+
+/**
+ * Loads team information for the team identified by $team_id.
+ *
+ * @param int $team_id The ID of the team to load.
+ * @return array|bool An array with the team information or false if the team was not found.
+ */
+function darts_donhn_team_load($team_id) {
+    if (!is_numeric($team_id)) {
+        return false;
+    }
+
+    $data = db_query('SELECT * FROM {darts_donhn_teams} WHERE team_id = %d', $team_id);
+    $team = db_fetch_array($data);
+
+    if ($team === false) {
+        return false;
+    }
+
+    $data = db_query('SELECT u.uid, u.name FROM {darts_donhn_team_players} t LEFT JOIN {users} u ON t.uid = u.uid ORDER BY u.name DESC');
+    while (($player = db_fetch_object($data)) !== false) {
+        $team['players'][$player->uid] = $player->name;
+    }
+
+    return $team;
+}
+
+/**
+ * Loads result information for the result identified by $result_id.
+ *
+ * @param int $result_id The ID of the result to load.
+ * @return array|bool An array with the result information or false if the result was not found.
+ */
+function darts_donhn_result_load($result_id) {
+    if (!is_numeric($result_id)) {
+        return false;
+    }
+
+    $data = db_query('SELECT * FROM {darts_donhn_results} WHERE result_id = %d', $result_id);
+    $result = db_fetch_array($data);
+    if ($result === false) {
+        return false;
+    }
+
+    /**
+     * @todo Specify fields to select from statistics table.
+     */
+    $data = db_query('SELECT s.*, u.name FROM {darts_donhn_result_stats} s LEFT JOIN {users} u ON s.uid = u.uid WHERE s.result_id = %d ORDER BY u.name DESC', $result_id);
+    while (($stats = db_fetch_array($data)) !== false) {
+        $result['statistics'][$stats['uid']] = $stats;
+    }
+
+    return $result;
+}
+
+/**
+ * Format the page title for a team page.
+ *
+ * @param array $team The team that is being viewed.
+ * @return string The page title.
+ */
+function darts_donhn_team_page_title($team) {
+    return $team['team_name'];
+}
+
+/**
+ * Format the page title for a result page.
+ *
+ * @param array $team The team that set the result.
+ * @param array $result The result that is being viewed.
+ * @return string The page title.
+ */
+function darts_donhn_result_page_title($team, $result) {
+    return t('!team against !opponent', array('!team' => $team['team_name'], '!opponent' => $result['opponent_name']));
+}
+
+/**
+ * Get a list of teams that are active in a DONHN competition.
+ *
+ * @return array|bool The list of teams, or false if something went wrong.
+ */
+function darts_donhn_get_teams() {
+    $data = db_query('SELECT team_id, team_name FROM {darts_donhn_teams} ORDER BY team_name ASC');
+    if ($data === false) {
+        return false;
+    }
+
+    $teams = array();
+    while (($team = db_fetch_array($data)) !== false) {
+        $teams[$team['team_id']] = $team['team_name'];
+    }
+
+    return $teams;
+}
+
+/**
+ * Check if a player identified by the $uid is part of the team identified by $team.
+ * 
+ * @param array|int $team The team in which the player should come out.
+ * @param int $uid The uid of the player to look up.
+ * @return bool true if the player is on the team, false if otherwise.
+ */
+function darts_donhn_team_is_player($team, $uid) {
+    if (!is_array($team)) {
+        $team = array('team_id', $team);
+    }
+
+    $data = db_query('SELECT uid FROM {darts_donhn_team_players} WHERE team_id = %d AND uid = %d', $team['team_id'], $uid);
+    if ($data === false) {
+        return false;
+    }
+
+    if (db_result($data) === false) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Check if the current $user can edit the DONHN $team.
+ *
+ * One of the following conditions should be met for a user to have access:
+ *  - The user can edit his own team,
+ *  - the user can administer the DONHN competition.
+ *
+ * @param $team The team to edited.
+ * @return bool true if the user has access, false if not.
+ */
+function user_can_edit_donhn_team($team) {
+    return (user_access('administer donhn competition') || (user_access('edit own donhn team') && darts_donhn_team_is_player($team, $GLOBALS['user'])));
+}
+
+/**
+ * The URL that points to the page on the DONHN website containing the <select> with the available divisions.
+ */
+define('DARTS_DONHN_COMPETITION_SELECT_URL', 'http://donhn.nl/login/competitieform.php');
+
+/**
+ * The URL that points to the page on the DONHN website containing the division ranking.
+ */
+define('DARTS_DONHN_COMPETITION_RESULT_URL', 'http://donhn.nl/login/competitiestand.php');
+
+/**
+ * Retrieve the available divisions from the DONHN website.
+ *
+ * The returned array is formatted so it can be used as an options array in a Forms API select.
+ *
+ * @return array List of divisions.
+ */
+function darts_donhn_competition_get_divisions() {
+    // Check the cache
+    if (($cache = cache_get('darts_donhn_divisions')) !== 0) {
+        return $cache->data;
+    }
+
+    $divisions = array(0 => t('Select a division...'));
+
+    // Fetch the HTML that contains the division select
+    $c = curl_init(DARTS_DONHN_COMPETITION_SELECT_URL);
+    curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+    $data = curl_exec($c);
+    curl_close($c);
+
+    // Create XML DOM object from HTML
+    $html = new DOMDocument();
+    $html->loadHtml($data);
+
+    // Query the select through XPath
+    $path = new DOMXPath($html);
+    $nodes = $path->query("//select[@name='divisie']");
+    // As there will be only one select matching this condition, return the first element of the node list.
+    $select = $nodes->item(0);
+    // Iterate of the child nodes, which will be either elements or text. We are only interested in the element nodes.
+    foreach ($select->childNodes as $option) {
+        if ($option->nodeType == XML_ELEMENT_NODE) {
+            $value = $option->getAttribute('value');
+            $label = $option->nodeValue;
+            $divisions[$value] = $label;
+        }
+    }
+
+    cache_set('darts_donhn_divisions', $divisions, 'cache', strtotime('09/01'));
+
+    return $divisions;
+}
+
+/**
+ * Get a list of teams that participate in a competition in the given DONHN division.
+ *
+ * @param string $division The division for which the teams should be selected.
+ * @return array|bool An array of teams, or false if the division does not exist.
+ */
+function darts_donhn_competition_get_teams($division) {
+    if (empty($division)) {
+        return false;
+    }
+
+    $teams = array(0 => 'Select a team...');
+    $ranking = darts_donhn_competition_get_ranking($division);
+    foreach ($ranking as $rank => $data) {
+        $teams[$data['name']] = $data['name'];
+    }
+
+    asort($teams);
+
+    return $teams;
+}
+
+/**
+ * Retrieve the ranking for the division from the DONHN website.
+ *
+ * @param string $division The division to look up.
+ * @return array|bool A rank ordered array with the team ranking.
+ */
+function darts_donhn_competition_get_ranking($division) {
+    if (empty($division)) {
+        return false;
+    }
+
+    // Check the cache
+    $cache = cache_get('darts_donhn_teams');
+    $donhn_teams = ($cache === 0) ? array() : $cache->data;
+    if (is_array($donhn_teams[$division]) && !empty($donhn_teams[$division])) {
+        return $donhn_teams[$division];
+    }
+
+    $teams = array();
+
+    // Fetch the HTML that contains the ranking data for the given division
+    $c = curl_init(DARTS_DONHN_COMPETITION_RESULT_URL);
+    curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($c, CURLOPT_POST, true);
+    curl_setopt($c, CURLOPT_POSTFIELDS, array('divisie' => $division, 'submit' => 'Ok'));
+    $data = curl_exec($c);
+    curl_close($c);
+
+    // Create XML DOM object from HTML
+    $html = new DOMDocument();
+    $html->loadHTML($data);
+
+    // Get all table rows of the second table, as this contains the ranking
+    $path = new DOMXPath($html);
+    $rows = $path->query("//table[2]/tr");
+    for ($i = 0; $i < $rows->length; $i++) {
+        $row = $rows->item($i);
+        $teams[] = array(
+            'name' => $row->childNodes->item(1)->nodeValue,
+            'played' => $row->childNodes->item(3)->nodeValue,
+            'points' => $row->childNodes->item(5)->nodeValue,
+            'penalty' => $row->childNodes->item(7)->nodeValue
+        );
+    }
+
+    // Remove the table header
+    array_shift($teams);
+
+    // Update cache
+    $donhn_teams[$division] = $teams;
+    $expiration = strtotime('+7 days');
+    cache_set('darts_donhn_teams', $donhn_teams, 'cache', $expiration);
+
+    return $teams;
+}

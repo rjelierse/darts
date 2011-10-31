@@ -1,0 +1,8 @@
+name = DONHN competition
+description = Administer teams in the DONHN competition
+core = 6.x
+version = 6.x-1.0
+package = Darts
+dependencies[] = darts
+dependencies[] = elements
+dependencies[] = ahah_helper

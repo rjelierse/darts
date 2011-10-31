@@ -1,0 +1,202 @@
+<?php
+/**
+ * Darts module.
+ *
+ * @todo Add player management.
+ */
+
+/**
+ * Implementation of hook_menu().
+ *
+ * @return array Menu items.
+ */
+function darts_menu() {
+    return array(
+        'darts' => array(
+            'title' => 'Home',
+            'description' => 'Darts frontpage.',
+            'access arguments' => array('access content'),
+            'page callback' => 'theme',
+            'page arguments' => array('darts_frontpage'),
+            'type' => MENU_CALLBACK
+        ),
+        'admin/darts' => array(
+            'title' => 'Darts',
+            'description' => 'Administer one of the darts competitions.',
+            'position' => 'left',
+            'access arguments' => array('access administration pages'),
+            'page callback' => 'darts_admin_page'
+        ),
+        'admin/darts/players' => array(
+            'title' => 'Players',
+            'description' => 'Manage the players that can parttake in a competition.',
+            // Note: this is almost the same as 'administer users', but we do not want to grant access to the user management system.
+            'access arguments' => array('administer darts players'),
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('darts_admin_players'),
+            'weight' => -50
+        ),
+    );
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function darts_theme() {
+    return array(
+        'darts_admin_players' => array(
+            'arguments' => array('form' => null)
+        ),
+        'darts_frontpage' => array(
+            'template' => 'frontpage'
+        )
+    );
+}
+
+/**
+ * Implementation of hook_init().
+ */
+function darts_init() {
+    drupal_add_css(drupal_get_path('module', 'darts').'/darts.css');
+}
+
+/**
+ * Landing page for the Darts administration section.
+ *
+ * Displays a list of links to administrative functions.
+ *
+ * @return string Rendered HTML.
+ */
+function darts_admin_page() {
+    $item = menu_get_item('admin/darts');
+    $content = system_admin_menu_block($item);
+    return theme('admin_block_content', $content);
+}
+
+function darts_admin_players($form_state) {
+    $form = array();
+    $players = array();
+
+    $teams = false;
+    // If darts_donhn module is enabled, get a list of teams that are active in the DONHN competition.
+    if (function_exists('darts_donhn_get_teams')) {
+        $teams = darts_donhn_get_teams();
+    }
+    if ($teams === false) {
+        $teams = array();
+    }
+
+    $data = pager_query('SELECT u.uid, u.name FROM {users} u WHERE u.uid > 1 ORDER BY u.name ASC', 25);
+    while (($player = db_fetch_object($data)) !== false) {
+        $players[$player->uid] = '';
+        $form['name'][$player->uid]['#value'] = check_plain($player->name);
+        // If darts_competition module is enabled, check if player is active in the local competition.
+        if (function_exists('darts_competition_is_player')) {
+            $form['competition'][$player->uid]['#value'] = darts_competition_is_player($player->uid) ? t('Yes') : t('No');
+        }
+        foreach ($teams as $team_id => $team_name) {
+            $form['donhn'][$team_id][$player->uid]['#value'] = darts_donhn_team_is_player($team_id, $player->uid) ? t('Yes') : t('No');
+        }
+    }
+
+    $form['players'] = array(
+        '#type' => 'checkboxes',
+        '#options' => $players
+    );
+
+    $form['pager'] = theme('pager', 25);
+
+    $form['actions'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('With selected players')
+    );
+
+    return $form;
+}
+
+function theme_darts_admin_players($form) {
+    $header = array(
+        theme('table_select_header_cell'),
+        t('Name')
+    );
+
+    if (is_array($form['competition'])) {
+        $header[] = t('Competition');
+    }
+    if (is_array($form['donhn']) && !empty($form['donhn'])) {
+        foreach (element_children($form['donhn']) as $team_id) {
+            $team = darts_donhn_team_load($team_id);
+            $header[] = check_plain($team['team_name']);
+        }
+    }
+
+    if (is_array($form['players']) && !empty($form['players'])) {
+        foreach (element_children($form['players']) as $uid) {
+            $row = array(
+                drupal_render($form['players'][$uid]),
+                drupal_render($form['name'][$uid])
+            );
+            if (is_array($form['competition']) && !empty($form['competition'])) {
+                $row[] = drupal_render($form['competition'][$uid]);
+            }
+            if (is_array($form['donhn']) && !empty($form['donhn'])) {
+                foreach (element_children($form['donhn']) as $team_id) {
+                    $row[] = drupal_render($form['donhn'][$team_id][$uid]);
+                }
+            }
+            $rows[] = $row;
+        }
+    }
+
+    $content = theme('table', $header, $rows);
+    $content .= drupal_render($form);
+
+    return $content;
+}
+
+/**
+ * Retrieves the list of (potential) players.
+ *
+ * @param bool $include_empty Include a placeholder item.
+ * @return array List of players.
+ */
+function darts_get_players ($include_empty = false) {
+    $data = db_query('SELECT uid, name FROM {users} WHERE uid > 1 ORDER BY name ASC');
+
+    $players = array();
+
+    if ($include_empty) {
+        $players[0] = t('Select a player...');
+    }
+
+    while (($player = db_fetch_object($data)) !== false) {
+        $players[$player->uid] = check_plain($player->name);
+    }
+
+    return $players;
+}
+
+function template_preprocess_darts_frontpage(&$variables) {
+    $blocks = array(
+        'views' => array('latest_news-block_1'),
+        'events' => array('upcoming'),
+        'darts_donhn' => array('results'),
+        'darts_competition' => array('ranking'),
+        'opengraph' => array('information'),
+    );
+
+    foreach ($blocks as $module => $deltas) {
+        foreach ($deltas as $delta) {
+            $data = module_invoke($module, 'block', 'view', $delta);
+            if ($data === false || empty($data['content'])) {
+                drupal_set_message(t('Failed to load block %block', array('%block' => $module.'-'.$delta)), 'warning');
+                continue;
+            }
+            $block = (object) $data;
+            $block->module = $module;
+            $block->delta = $delta;
+            $delta = str_replace('-','_', $delta);
+            $variables['block_'.$module.'_'.$delta] = theme('block', $block);
+        }
+    }
+}

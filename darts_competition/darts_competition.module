@@ -1,0 +1,395 @@
+<?php
+/**
+ * Darts competition module.
+ */
+
+define('DARTS_STAT_FINISH', 1);
+define('DARTS_STAT_DARTS', 2);
+
+/**
+ * Implementation of hook_menu().
+ */
+function darts_competition_menu() {
+    return array(
+        'darts/competition' => array(
+            'title' => 'Local competition',
+            'description' => 'The local competition',
+            'access arguments' => array('access content'),
+            'file' => 'darts_competition.pages.inc',
+            'page callback' => 'darts_competition_results',
+            'type' => MENU_CALLBACK,
+        ),
+        'darts/competition/results' => array(
+            'title' => 'Results',
+            'description' => 'Overview of the matches that were played up to now.',
+            'type' => MENU_DEFAULT_LOCAL_TASK,
+            'weight' => 0
+        ),
+        'darts/competition/ranking' => array(
+            'title' => 'Ranking',
+            'description' => 'Ranking for the local competition.',
+            'access arguments' => array('access content'),
+            'file' => 'darts_competition.pages.inc',
+            'page callback' => 'darts_competition_ranking',
+            'type' => MENU_LOCAL_TASK,
+            'weight' => 1
+        ),
+        'darts/competition/statistics' => array(
+            'title' => 'Statistics',
+            'description' => 'Statistics for the local competition.',
+            'access arguments' => array('access content'),
+            'file' => 'darts_competition.pages.inc',
+            'page callback' => 'darts_competition_statistics',
+            'page arguments' => array('throws'),
+            'type' => MENU_LOCAL_TASK,
+            'weight' => 2
+        ),
+        'darts/competition/statistics/throws' => array(
+            'title' => 'Top throws',
+            'description' => 'List the top players in 100+, 140+ and 180 throws.',
+            'type' => MENU_DEFAULT_LOCAL_TASK,
+            'weight' => 0
+        ),
+        'darts/competition/statistics/finishes' => array(
+            'title' => 'Top finishes',
+            'description' => 'List the top players in 100+ finishes.',
+            'access arguments' => array('access content'),
+            'file' => 'darts_competition.pages.inc',
+            'page callback' => 'darts_competition_statistics',
+            'page arguments' => array(3),
+            'type' => MENU_LOCAL_TASK,
+            'weight' => 1
+        ),
+//        'darts/competition/statistics/darts' => array(
+//            'title' => 'Top darts',
+//            'description' => 'List the top players in finishes under 21 darts.',
+//            'access arguments' => array('access content'),
+//            'file' => 'darts_competition.pages.inc',
+//            'page callback' => 'darts_competition_statistics',
+//            'page arguments' => array(3),
+//            'type' => MENU_LOCAL_TASK,
+//            'weight' => 2
+//        ),
+        // Local competition: individual result
+        'darts/competition/results/%darts_competition_result' => array(
+            'title' => 'Result details',
+            'title callback' => 'darts_competition_result_page_title',
+            'title arguments' => array(3),
+            'access arguments' => array('access content'),
+            'page callback' => 'theme',
+            'page arguments' => array('darts_competition_result', 3),
+            'type' => MENU_CALLBACK
+        ),
+        'darts/competition/results/%darts_competition_result/view' => array(
+            'title' => 'View',
+            'description' => 'View the result details.',
+            'type' => MENU_DEFAULT_LOCAL_TASK,
+            'weight' => 0
+        ),
+        'darts/competition/results/%darts_competition_result/edit' => array(
+            'title' => 'Edit',
+            'description' => 'Edit the result details.',
+            'access arguments' => array('edit competition result'),
+            'file' => 'darts_competition.admin.inc',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('darts_competition_result_edit', 3),
+            'type' => MENU_LOCAL_TASK,
+            'weight' => 1
+        ),
+        'admin/darts/competition' => array(
+            'title' => 'Local competition',
+            'description' => 'Manage the local darts competition.',
+            'access arguments' => array('administer local competition'),
+            'file' => 'darts_competition.admin.inc',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('darts_competition_admin_settings'),
+            'weight' => -40
+        ),
+        'admin/darts/competition/settings' => array(
+            'title' => 'Settings',
+            'type' => MENU_DEFAULT_LOCAL_TASK
+        ),
+        'admin/darts/competition/results' => array(
+            'title' => 'Results',
+            'description' => 'Manage the results in the local darts competition.',
+            'access arguments' => array('administer local competition'),
+            'file' => 'darts_competition.admin.inc',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('darts_competition_admin_results'),
+            'type' => MENU_LOCAL_TASK,
+            'weight' => 1
+        ),
+        'admin/darts/competition/results/list' => array(
+            'title' => 'List',
+            'type' => MENU_DEFAULT_LOCAL_TASK
+        ),
+        'admin/darts/competition/results/add' => array(
+            'title' => 'Add new',
+            'description' => 'Add a new result to the local darts competition.',
+            'access arguments' => array('administer local competition'),
+            'file' => 'darts_competition.admin.inc',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('darts_competition_result_edit'),
+            'type' => MENU_LOCAL_TASK,
+            'weight' => 1
+        ),
+        'admin/darts/competition/restart' => array(
+            'title' => 'Restart competition',
+            'description' => 'Remove all results and statistics from the competition.',
+            'access arguments' => array('administer local competition'),
+            'file' => 'darts_competition.admin.inc',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('darts_competition_confirm_restart'),
+            'type' => MENU_CALLBACK
+        )
+    );
+}
+
+/**
+ * Implementation of hook_perm().
+ */
+function darts_competition_perm() {
+    return array(
+        'edit competition result',
+        'administer local competition'
+    );
+}
+
+/**
+ * Implementation of hook_user().
+ */
+function darts_competition_user($op, &$edit, &$account, $category = '') {
+    switch ($op) {
+        // A user is being loaded
+        case 'load':
+            $data = db_query('SELECT SUM(throw_100) AS throw_100, SUM(throw_140) AS throw_140, SUM(throw_180) AS throw_180 FROM {darts_competition_result_stats} WHERE uid = %d', $account->uid);
+            $account->darts['competition'] = db_fetch_array($data);
+            break;
+        // A user is being viewed
+        case 'view':
+            if (empty($account->darts['competition'])) break;
+
+            // Set the darts placeholder
+            if (empty($account->content['darts'])) {
+                $account->content['darts'] = array(
+                    '#type' => 'user_profile_category',
+                    '#title' => t('Darts')
+                );
+            }
+
+            $account->content['darts']['competition'] = array(
+                '#type' => 'user_profile_category',
+                '#title' => t('Competition statistics')
+            );
+            break;
+        // A user is being deleted (always assume this is a player)
+        case 'delete':
+            $data = db_query('SELECT result_id FROM {darts_competition_results} WHERE home_uid = %d OR away_uid = %d', $account->uid, $account->uid);
+            while (($result_id = db_result($data)) !== false) {
+                darts_competition_result_delete($result_id);
+            }
+
+            db_query('DELETE FROM {darts_competition_ranking} WHERE uid = %d', $account->uid);
+            break;
+    }
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function darts_competition_theme() {
+    return array(
+        'darts_competition_result_statistics_fieldset' => array(
+            'arguments' => array('fieldset' => null),
+            'file' => 'darts_competition.admin.inc'
+        ),
+        'darts_competition_result' => array(
+            'arguments' => array('result' => null),
+            'template' => 'darts_competition_result'
+        ),
+        'darts_competition_admin_results' => array(
+            'arguments' => array('form' => null),
+            'file' => 'darts_competition.admin.inc'
+        )
+    );
+}
+
+/**
+ * Implementation of hook_block().
+ */
+function darts_competition_block($op = 'list', $delta = 0, $edit = array()) {
+    switch ($op) {
+        case 'list':
+            return array(
+                'ranking' => array(
+                    'info' => t('Competition: top 3 players'),
+                    'cache' => BLOCK_CACHE_GLOBAL
+                )
+            );
+        case 'view':
+            $function = 'darts_competition_block_'.$delta;
+            if (function_exists($function)) {
+                return $function();
+            }
+            return false;
+    }
+}
+
+/**
+ * Build the ranking block.
+ *
+ * This block contains the current top 3 in the competition.
+ *
+ * @return array The block.
+ */
+function darts_competition_block_ranking() {
+    $block = array(
+        'subject' => t('Competition ranking'),
+        'content' => t('No players found.')
+    );
+
+    $data = db_query("SELECT u.uid, u.name FROM {darts_competition_ranking} r LEFT JOIN {users} u ON r.uid = u.uid ORDER BY r.games_won DESC, r.games_played ASC LIMIT 3");
+    if ($data === false) {
+        return $block;
+    }
+
+    $items = array();
+    while (($player = db_fetch_object($data)) !== false) {
+        $items[] = theme('username', $player);
+    }
+
+    if (!empty($items)) {
+        $block['content']  = theme('item_list', $items, null, 'ol');
+        $block['content'] .= l(t('more...'), 'darts/competition/ranking');
+    }
+
+    return $block;
+}
+
+/**
+ * Loader function for a competition result.
+ *
+ * @param int $result_id The unique ID of the result.
+ * @return array|bool The result details, or false if the given $result_id did not give a result.
+ */
+function darts_competition_result_load($result_id) {
+    if (!is_numeric($result_id)) {
+        return false;
+    }
+
+    $data = db_query("SELECT r.*, h.name AS home_name, a.name AS away_name
+                      FROM {darts_competition_results} r
+                      LEFT JOIN {users} h ON r.home_uid = h.uid
+                      LEFT JOIN {users} a ON r.away_uid = a.uid
+                      WHERE r.result_id = %d", $result_id);
+    $result = db_fetch_array($data);
+    if ($result === false) {
+        return false;
+    }
+
+    // Get statistics for both players
+    foreach (array('home_', 'away_') as $prefix) {
+        // Fetch player throws statistics
+        $data = db_query('SELECT * FROM {darts_competition_result_stats} WHERE result_id = %d AND uid = %d', $result['result_id'], $result[$prefix.'uid']);
+        $record = db_fetch_array($data);
+        $result[$prefix.'throws_100'] = $record['throw_100'];
+        $result[$prefix.'throws_140'] = $record['throw_140'];
+        $result[$prefix.'throws_180'] = $record['throw_180'];
+
+        // Fetch player finish statistics
+        $result[$prefix.'finishes'] = array();
+        $result[$prefix.'darts'] = array();
+        $data = db_query('SELECT stat_id, stat_type, stat_value FROM {darts_competition_result_unique_stats} WHERE result_id = %d AND uid = %d', $result['result_id'], $result[$prefix.'uid']);
+        while (($stat = db_fetch_array($data)) !== false) {
+            switch ($stat['stat_type']) {
+                case DARTS_STAT_FINISH:
+                    $result[$prefix.'finishes'][$stat['stat_id']] = $stat['stat_value'];
+                    break;
+                case DARTS_STAT_DARTS:
+                    $result[$prefix.'darts'][$stat['stat_id']] = $stat['stat_value'];
+                    break;
+            }
+        }
+    }
+
+    return $result;
+}
+
+/**
+ * Build the page title for a given $result.
+ *
+ * @param array $result The result.
+ * @return string The formatted title.
+ */
+function darts_competition_result_page_title($result) {
+    return t('!home against !away', array('!home' => $result['home_name'], '!away' => $result['away_name']));
+}
+
+/**
+ * Delete the given result from the database. Update the ranking accordingly.
+ *
+ * @param array|int $result The result to delete. You can also pass the result_id, this will automatically load the result.
+ * @return void Nothing.
+ */
+function darts_competition_result_delete($result) {
+    if (is_numeric($result)) {
+        $result = darts_competition_result_load($result);
+    }
+
+    // Remove statistics
+    db_query('DELETE FROM {darts_competition_result_stats} WHERE result_id = %d', $result['result_id']);
+    db_query('DELETE FROM {darts_competition_result_unique_stats} WHERE result_id = %d', $result['result_id']);
+
+    // Update ranking
+    $legs_played = $result['home_legs'] + $result['away_legs'];
+    // Home player
+    db_query('UPDATE {darts_competition_ranking}
+              SET games_played = games_played - 1,
+                  games_won = games_won - %d,
+                  legs_played = legs_played - %d,
+                  legs_won = legs_won - %d
+              WHERE uid = %d',
+             ($result['home_legs'] > $result['away_legs']) ? 1 : 0,
+             $legs_played, $result['home_legs'], $result['home_uid']);
+    // Away player
+    db_query('UPDATE {darts_competition_ranking}
+              SET games_played = games_played - 1,
+                  games_won = games_won - %d,
+                  legs_played = legs_played - %d,
+                  legs_won = legs_won - %d
+              WHERE uid = %d',
+             ($result['home_legs'] < $result['away_legs']) ? 1 : 0,
+             $legs_played, $result['away_legs'], $result['away_uid']);
+
+    // Remove match
+    db_query('DELETE FROM {darts_competition_results} WHERE result_id = %d', $result['result_id']);
+}
+
+function template_preprocess_darts_competition_result(&$variables) {
+    $result = $variables['result'];
+    
+    $variables['result_date'] = format_date($result['result_date'], 'custom', 'l j F Y');
+    $variables['home_player'] = theme('username', (object) array('uid' => $result['home_uid'], 'name' => $result['home_name']));
+    $variables['away_player'] = theme('username', (object) array('uid' => $result['away_uid'], 'name' => $result['away_name']));
+    $variables['home_player_classes'] = ($result['home_legs'] > $result['away_legs']) ? 'winner' : '';
+    $variables['away_player_classes'] = ($result['home_legs'] < $result['away_legs']) ? 'winner' : '';
+}
+
+/**
+ * Check if the player identified by the $uid is active in the local competition.
+ * 
+ * @param $uid The {users}.uid of the player to look up.
+ * @return bool true if the player is active in the competition, false otherwise.
+ */
+function darts_competition_is_player($uid) {
+    $data = db_query('SELECT uid FROM {darts_competition_ranking} WHERE uid = %d', $uid);
+    if ($data === false) {
+        return false;
+    }
+
+    if (db_result($data) === false) {
+        return false;
+    }
+
+    return true;
+}

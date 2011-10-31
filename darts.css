@@ -1,0 +1,50 @@
+/**
+ * Darts module: Stylesheet.
+ */
+
+/* Darts result template styles */
+.result .date {
+    text-align: center;
+    font-size: 1.1em;
+    font-style: italic;
+}
+
+.result h2 {
+    text-align: center;
+}
+
+.result .scoreboard {
+    margin-bottom: 1em;
+}
+.result .scoreboard .player,
+.result .scoreboard .team {
+    float: left;
+    width: 50%;
+    height: 48px;
+    line-height: 48px;
+    font-size: 24px;
+}
+.result .scoreboard .away-player,
+.result .scoreboard .away-team {
+    text-align: right;
+}
+.result .scoreboard .home-player .score,
+.result .scoreboard .home-team .score {
+    float: right;
+}
+.result .scoreboard .away-player .score,
+.result .scoreboard .away-team .score {
+    float: left;
+}
+.result .scoreboard .score {
+    width: 48px;
+    background:  #e0e0e0;
+    border-radius: 8px;
+    margin: 0 4px;
+    text-align: center;
+}
+
+.result .scoreboard .winner .score {
+    color: #fff;
+    background: #080;
+}

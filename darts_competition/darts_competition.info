@@ -1,0 +1,7 @@
+name = Local competition
+description = Administer a local darts competition
+core = 6.x
+version = 6.x-1.0
+package = Darts
+dependencies[] = darts
+dependencies[] = elements
