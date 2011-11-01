@@ -373,8 +373,8 @@ function darts_donhn_get_teams() {
  * @return bool true if the player is on the team, false if otherwise.
  */
 function darts_donhn_team_is_player($team, $uid) {
-    if (!is_array($team)) {
-        $team = array('team_id', $team);
+    if (!is_array($team) && is_numeric($team)) {
+        $team = array('team_id' => $team);
     }
 
     $data = db_query('SELECT uid FROM {darts_donhn_team_players} WHERE team_id = %d AND uid = %d', $team['team_id'], $uid);
