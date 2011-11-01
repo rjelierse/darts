@@ -295,6 +295,23 @@ function darts_donhn_team_edit_submit($form, &$form_state) {
         drupal_goto('admin/content/darts/teams');
     }
 
+    // New team, add captain as player to the team.
+    if (empty($key)) {
+        $team_player = array(
+            'team_id' => $team['team_id'],
+            'uid' => $team['captain_uid']
+        );
+        drupal_write_record('darts_donhn_team_players', $team_player);
+    }
+    // Existing team, new captain who was not previously part of the team. Add captain as team player.
+    elseif (($team_player = db_fetch_array(db_query('SELECT * FROM {darts_donhn_team_players} WHERE team_id = %d AND uid = %d', $team['team_id'], $team['captain_uid']))) === false) {
+        $team_player = array(
+            'team_id' => $team['team_id'],
+            'uid' => $team['captain_uid']
+        );
+        drupal_write_record('darts_donhn_team_players', $team_player);
+    }
+
     $path = 'darts/donhn/'.$team['team_id'];
 
     // Build menu item
