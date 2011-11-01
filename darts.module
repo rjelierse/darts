@@ -36,6 +36,21 @@ function darts_menu() {
             'page arguments' => array('darts_admin_players'),
             'weight' => -50
         ),
+        'admin/darts/players/list' => array(
+            'title' => 'List',
+            'description' => 'List of current players.',
+            'type' => MENU_DEFAULT_LOCAL_TASK,
+            'weight' => -50
+        ),
+        'admin/darts/players/add' => array(
+            'title' => 'Add player',
+            'description' => 'Add a new player.',
+            'access arguments' => array('administer darts players'),
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('darts_player_edit'),
+            'type' => MENU_LOCAL_TASK,
+            'weight' => -49
+        )
     );
 }
 
@@ -67,6 +82,31 @@ function darts_init() {
     drupal_add_css(drupal_get_path('module', 'darts').'/darts.css');
 }
 
+function darts_user($op, &$edit, &$account, $category = '') {
+    if ($op == 'categories') {
+        return array(
+            array(
+                'name' => 'darts',
+                'title' => t('Darts'),
+                'access callback' => 'user_access',
+                'access arguments' => array('administer darts players')
+            )
+        );
+    }
+    if ($op == 'form' && $category == 'darts') {
+        $form_state = array('values' => &$edit);
+        return darts_player_edit($form_state, $account);
+    }
+    if ($op == 'validate' && $category == 'darts') {
+        $form_state = array('values' => &$edit);
+        darts_player_edit_validate(array(), $form_state);
+    }
+    if ($op == 'submit' && $category == 'darts') {
+        unset($edit['role']);
+        unset($edit['notify']);
+    }
+}
+
 /**
  * Landing page for the Darts administration section.
  *
@@ -96,7 +136,7 @@ function darts_admin_players($form_state) {
     $data = pager_query('SELECT u.uid, u.name FROM {users} u WHERE u.uid > 1 ORDER BY u.name ASC', 25);
     while (($player = db_fetch_object($data)) !== false) {
         $players[$player->uid] = '';
-        $form['name'][$player->uid]['#value'] = check_plain($player->name);
+        $form['name'][$player->uid]['#value'] = theme('username', $player);
         // If darts_competition module is enabled, check if player is active in the local competition.
         if (function_exists('darts_competition_is_player')) {
             $form['competition'][$player->uid]['#value'] = darts_competition_is_player($player->uid) ? t('Yes') : t('No');
@@ -104,6 +144,7 @@ function darts_admin_players($form_state) {
         foreach ($teams as $team_id => $team_name) {
             $form['donhn'][$team_id][$player->uid]['#value'] = darts_donhn_team_is_player($team_id, $player->uid) ? t('Yes') : t('No');
         }
+        $form['player_actions'][$player->uid]['#value'] = l(t('edit'), 'user/'.$player->uid.'/edit/darts');
     }
 
     $form['players'] = array(
@@ -178,6 +219,8 @@ function theme_darts_admin_players($form) {
         }
     }
 
+    $header[] = t('Actions');
+
     if (is_array($form['players']) && !empty($form['players'])) {
         foreach (element_children($form['players']) as $uid) {
             $row = array(
@@ -192,6 +235,7 @@ function theme_darts_admin_players($form) {
                     $row[] = drupal_render($form['donhn'][$team_id][$uid]);
                 }
             }
+            $row[] = drupal_render($form['player_actions'][$uid]);
             $rows[] = $row;
         }
     }
@@ -247,4 +291,112 @@ function template_preprocess_darts_frontpage(&$variables) {
             $variables['block_'.$module.'_'.$delta] = theme('block', $block);
         }
     }
+}
+
+function darts_player_edit($form_state = array(), $player = null) {
+    $form = array();
+    $roles = user_roles(TRUE);
+    unset($roles[DRUPAL_AUTHENTICATED_RID]);
+
+    if (is_object($player)) {
+        foreach(array_keys($roles) as $rid) {
+            if (isset($player->roles[$rid])) {
+                $player->role = $rid;
+            }
+        }
+    }
+
+    $roles[0] = t('Player');
+    ksort($roles);
+
+    $form['uid'] = array(
+        '#type' => 'value',
+        '#value' => is_object($player) ? $player->uid : 0
+    );
+
+    $form['notify'] = array(
+        '#type' => 'value',
+        '#value' => !is_object($player)
+    );
+
+    $form['name'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Naam'),
+        '#maxlength' => USERNAME_MAX_LENGTH,
+        '#description' => t('Spaces are allowed; punctuation is not allowed except for periods, hyphens, and underscores.'),
+        '#default_value' => is_object($player) ? $player->name : '',
+        '#disabled' => !user_access('administer darts players'),
+        '#required' => true,
+        '#weight' => -50
+    );
+
+    $form['role'] = array(
+        '#type' => 'select',
+        '#title' => t('Role'),
+        '#options' => $roles,
+        '#default_value' => is_object($player) ? $player->role : 0,
+        '#required' => true,
+        '#weight' => -45
+    );
+
+    $form['mail'] = array(
+        '#type' => 'textfield',
+        '#title' => t('E-mail address'),
+        '#description' => t('The e-mail address on which the player can be contacted. Note: this is only required for players that have additional permissions.'),
+        '#default_value' => is_object($player) ? $player->mail : '',
+        '#weight' => -40
+    );
+
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => is_object($player) ? t('Save player') : t('Create player')
+    );
+    
+    return $form;
+}
+
+function darts_player_edit_validate($form, &$form_state) {
+    if ($message = user_validate_name($form_state['values']['name'])) {
+        form_set_error('name', $message);
+    }
+
+    switch($form_state['values']['role']) {
+        case 0:
+            // User is player, unset roles.
+            $form_state['values']['roles'] = array();
+            break;
+        default:
+            // User has elevated rights, assign role.
+            $form_state['values']['roles'] = array($form_state['values']['role'] => true);
+            if ($message = user_validate_mail($form_state['values']['mail'])) {
+                form_set_error('mail', $message);
+            }
+            break;
+    }
+}
+
+function darts_player_edit_submit($form, &$form_state) {
+    $data = $form_state['values'];
+    unset($data['uid']);
+    unset($data['role']);
+    unset($data['notify']);
+    
+    $data['status'] = true;
+    $data['password'] = user_password();
+
+    $account = user_save(null, $data);
+    if ($account === false) {
+        drupal_set_message(t('Could not save player.'), 'error');
+        drupal_goto('admin/darts/players/add');
+    }
+
+    if ($form_state['values']['notify'] && $form_state['values']['role'] > 0) {
+        _user_mail_notify('register_admin_created', $account);
+        drupal_set_message(t('Password and further instructions have been e-mailed to the new user <a href="@url">%name</a>.', array('@url' => url("user/$account->uid"), '%name' => $account->name)));
+    }
+    else {
+        drupal_set_message(t('Created a new user account for <a href="@url">%name</a>. No e-mail has been sent.', array('@url' => url("user/$account->uid"), '%name' => $account->name)));
+    }
+
+    drupal_goto('admin/darts/players');
 }
