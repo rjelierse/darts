@@ -235,6 +235,29 @@ function darts_competition_block($op = 'list', $delta = 0, $edit = array()) {
     }
 }
 
+function darts_competition_player_operations($form_state = array()) {
+    if (user_access('administer local competition') === false) {
+        return array();
+    }
+
+    return array(
+        'remove-competition' => array(
+            'label' => t('Remove from competition'),
+            'callback' => 'darts_competition_remove_players'
+        )
+    );
+}
+
+function darts_competition_remove_players($players) {
+    foreach ($players as $uid) {
+        $edit = array();
+        $account = new stdClass();
+        $account->uid = $uid;
+
+        darts_competition_user('delete', $edit, $account);
+    }
+}
+
 /**
  * Build the ranking block.
  *

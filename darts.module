@@ -40,6 +40,13 @@ function darts_menu() {
 }
 
 /**
+ * Implementation of hook_perm().
+ */
+function darts_perm() {
+    return array('administer darts players');
+}
+
+/**
  * Implementation of hook_theme().
  */
 function darts_theme() {
@@ -108,10 +115,51 @@ function darts_admin_players($form_state) {
 
     $form['actions'] = array(
         '#type' => 'fieldset',
-        '#title' => t('With selected players')
+        '#title' => t('With selected players'),
+        '#prefix' => '<div class="container-inline">',
+        '#suffix' => '</div>',
+    );
+    $actions = array(
+        '' => t('Select an action...')
+    );
+    foreach (module_invoke_all('player_operations') as $action => $details) {
+        $actions[$action] = $details['label'];
+    }
+    $form['actions']['action'] = array(
+        '#type' => 'select',
+        '#options' => $actions,
+        '#default_value' => '',
+    );
+    $form['actions']['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Apply')
     );
 
     return $form;
+}
+
+function darts_admin_players_validate($form, &$form_state) {
+    $form_state['values']['players'] = array_filter($form_state['values']['players']);
+    if (empty($form_state['values']['players'])) {
+        form_set_error('', t('No players selected. Please select players first.'));
+    }
+    if (empty($form_state['values']['action'])) {
+        form_set_error('actions][action', t('No action selected. Please select an action.'));
+    }
+}
+
+function darts_admin_players_submit($form, &$form_state) {
+    $actions = module_invoke_all('player_operations', $form_state);
+    $action = $actions[$form_state['values']['action']];
+
+    $args = array($form_state['values']['players']);
+    if (isset($action['callback arguments']) && is_array($action['callback arguments'])) {
+        $args = array_merge($args, $action['callback arguments']);
+    }
+
+    call_user_func_array($action['callback'], $args);
+
+    drupal_set_message(t('The selected action was successfully applied to the selected players.'));
 }
 
 function theme_darts_admin_players($form) {

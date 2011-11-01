@@ -201,6 +201,16 @@ function darts_donhn_perm() {
 }
 
 /**
+ * Implementation of hook_user().
+ */
+function darts_donhn_user($op, &$edit, &$account, $category = '') {
+    if ($op == 'delete') {
+        db_query('DELETE FROM {darts_donhn_team_players} WHERE uid = %d', $account->uid);
+        db_query('UPDATE {darts_donhn_teams} SET captain_uid = 0 WHERE captain_uid = %d', $account->uid);
+    }
+}
+
+/**
  * Implementation of hook_block().
  */
 function darts_donhn_block($op = 'list', $delta = 0, $edit = array()) {
@@ -533,4 +543,69 @@ function darts_donhn_competition_get_ranking($division) {
     cache_set('darts_donhn_teams', $donhn_teams, 'cache', $expiration);
 
     return $teams;
+}
+
+/**
+ * Generate a list of operations that can be applied to a player.
+ *
+ * @return array List of player operations for DONHN teams.
+ *
+ * @seealso hook_player_operations()
+ */
+function darts_donhn_player_operations($form_state = array()) {
+    $operations = array();
+
+    $add_teams = array();
+    $remove_teams = array();
+
+    foreach (darts_donhn_get_teams() as $team_id => $team_name) {
+        if (user_can_edit_donhn_team($team_id)) {
+            $add_teams['add_team-'.$team_id] = $team_name;
+            $remove_teams['remove_team-'.$team_id] = $team_name;
+        }
+    }
+
+    if (!empty($add_teams)) {
+        $operations = array(
+            t('Add players to team') => array('label' => $add_teams),
+            t('Remove players from team') => array('label' => $remove_teams)
+        );
+    }
+
+    if ($form_state['submitted']) {
+        list($operation, $team_id) = explode('-', $form_state['values']['action']);
+        if ($operation == 'add_team' || $operation == 'remove_team') {
+            if (user_can_edit_donhn_team($team_id)) {
+                $operations[$form_state['values']['action']] = array(
+                    'callback' => ($operation == 'add_team') ? 'darts_donhn_team_add_players' : 'darts_donhn_team_remove_players',
+                    'callback arguments' => array($team_id)
+                );
+            }
+        }
+    }
+
+    return $operations;
+}
+
+/**
+ * @param array $players
+ * @param int $team_id
+ * @return void Nothing.
+ */
+function darts_donhn_team_add_players($players, $team_id) {
+    foreach ($players as $uid) {
+        if (darts_donhn_team_is_player($team_id, $uid) === false) {
+            $team_player = array(
+                'team_id' => $team_id,
+                'uid' => $uid
+            );
+            drupal_write_record('darts_donhn_team_players', $team_player);
+        }
+    }
+}
+
+function darts_donhn_team_remove_players($players, $team_id) {
+    foreach ($players as $uid) {
+        db_query('DELETE FROM {darts_donhn_team_players} WHERE team_id = %d AND uid = %d', $team_id, $uid);
+    }
 }
