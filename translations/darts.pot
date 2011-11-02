@@ -1,0 +1,759 @@
+# $Id$
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  darts.module: n/a
+#  darts.info: n/a
+#  darts_competition/darts_competition.pages.inc: n/a
+#  darts_competition/darts_competition.module: n/a
+#  darts_competition/darts_competition.info: n/a
+#  darts_donhn/darts_donhn.info: n/a
+#  darts_competition/darts_competition.admin.inc: n/a
+#  darts_donhn/darts_donhn.admin.inc: n/a
+#  darts_donhn/darts_donhn.pages.inc: n/a
+#  darts_donhn/darts_donhn.module: n/a
+#  darts_competition/darts_competition_result.tpl.php: n/a
+#  darts_donhn/templates/darts-donhn-result.tpl.php: n/a
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2011-11-02 17:21+0100\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: darts.module:90;24 darts.info:0 darts_competition/darts_competition.pages.inc:163 darts_competition/darts_competition.module:176 darts_competition/darts_competition.info:0 darts_donhn/darts_donhn.info:0
+msgid "Darts"
+msgstr ""
+
+#: darts.module:142;145
+msgid "Yes"
+msgstr ""
+
+#: darts.module:142;145
+msgid "No"
+msgstr ""
+
+#: darts.module:147 darts_competition/darts_competition.admin.inc:466 darts_donhn/darts_donhn.admin.inc:63
+msgid "edit"
+msgstr ""
+
+#: darts.module:159
+msgid "With selected players"
+msgstr ""
+
+#: darts.module:164
+msgid "Select an action..."
+msgstr ""
+
+#: darts.module:176
+msgid "Apply"
+msgstr ""
+
+#: darts.module:185
+msgid "No players selected. Please select players first."
+msgstr ""
+
+#: darts.module:188
+msgid "No action selected. Please select an action."
+msgstr ""
+
+#: darts.module:203
+msgid "The selected action was successfully applied to the selected players."
+msgstr ""
+
+#: darts.module:209 darts_competition/darts_competition.pages.inc:69 darts_donhn/darts_donhn.admin.inc:241 darts_donhn/darts_donhn.pages.inc:165
+msgid "Name"
+msgstr ""
+
+#: darts.module:213 darts_donhn/darts_donhn.pages.inc:117
+msgid "Competition"
+msgstr ""
+
+#: darts.module:222 darts_competition/darts_competition.admin.inc:517 darts_donhn/darts_donhn.admin.inc:98
+msgid "Actions"
+msgstr ""
+
+#: darts.module:261
+msgid "Select a player..."
+msgstr ""
+
+#: darts.module:284
+msgid "Failed to load block %block"
+msgstr ""
+
+#: darts.module:309 darts_competition/darts_competition.pages.inc:116;157
+msgid "Player"
+msgstr ""
+
+#: darts.module:324
+msgid "Naam"
+msgstr ""
+
+#: darts.module:326
+msgid "Spaces are allowed; punctuation is not allowed except for periods, hyphens, and underscores."
+msgstr ""
+
+#: darts.module:335
+msgid "Role"
+msgstr ""
+
+#: darts.module:344
+msgid "E-mail address"
+msgstr ""
+
+#: darts.module:345
+msgid "The e-mail address on which the player can be contacted. Note: this is only required for players that have additional permissions."
+msgstr ""
+
+#: darts.module:352
+msgid "Save player"
+msgstr ""
+
+#: darts.module:352
+msgid "Create player"
+msgstr ""
+
+#: darts.module:389
+msgid "Could not save player."
+msgstr ""
+
+#: darts.module:395
+msgid "Password and further instructions have been e-mailed to the new user <a href=\"@url\">%name</a>."
+msgstr ""
+
+#: darts.module:398
+msgid "Created a new user account for <a href=\"@url\">%name</a>. No e-mail has been sent."
+msgstr ""
+
+#: darts.module:61
+msgid "administer darts players"
+msgstr ""
+
+#: darts.module:16 darts_donhn/darts_donhn.admin.inc:400 darts_donhn/darts_donhn.pages.inc:12
+msgid "Home"
+msgstr ""
+
+#: darts.module:17
+msgid "Darts frontpage."
+msgstr ""
+
+#: darts.module:25
+msgid "Administer one of the darts competitions."
+msgstr ""
+
+#: darts.module:31 darts_competition/darts_competition.pages.inc:22
+msgid "Players"
+msgstr ""
+
+#: darts.module:32
+msgid "Manage the players that can parttake in a competition."
+msgstr ""
+
+#: darts.module:40 darts_competition/darts_competition.module:123 darts_donhn/darts_donhn.module:150
+msgid "List"
+msgstr ""
+
+#: darts.module:41
+msgid "List of current players."
+msgstr ""
+
+#: darts.module:46
+msgid "Add player"
+msgstr ""
+
+#: darts.module:47
+msgid "Add a new player."
+msgstr ""
+
+#: darts.info:0
+msgid "Support functions"
+msgstr ""
+
+#: darts.info:0
+msgid "Manage the Darts module and its subpackages"
+msgstr ""
+
+#: darts_competition/darts_competition_result.tpl.php:20 darts_donhn/darts_donhn.admin.inc:373 darts_donhn/templates/darts-donhn-result.tpl.php:21
+msgid "Result"
+msgstr ""
+
+#: darts_competition/darts_competition_result.tpl.php:33 darts_competition/darts_competition.admin.inc:87 darts_competition/darts_competition.module:38 darts_donhn/darts_donhn.admin.inc:27 darts_donhn/templates/darts-donhn-result.tpl.php:34
+msgid "Statistics"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:23;513 darts_competition/darts_competition.pages.inc:21 darts_donhn/darts_donhn.admin.inc:360 darts_donhn/darts_donhn.pages.inc:11
+msgid "Date"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:37
+msgid "Player one"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:41
+msgid "Player two"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:45 darts_donhn/darts_donhn.admin.inc:409
+msgid "Save result"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:79;516 darts_competition/darts_competition.pages.inc:23;163 darts_donhn/darts_donhn.pages.inc:14
+msgid "Score"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:93 darts_competition/darts_competition.pages.inc:110
+msgid "100+ throws"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:101 darts_competition/darts_competition.pages.inc:111
+msgid "140+ throws"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:109 darts_competition/darts_competition.pages.inc:112
+msgid "180 throws"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:165;168
+msgid "You have not selected a player. Please select a player for the result."
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:171
+msgid "You have selected the same player for both options. Please correct the issue."
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:359
+msgid "Result saved."
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:384
+msgid "Finish scores"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:390;406
+msgid "No finish data available"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:400
+msgid "Darts to finish"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:425
+msgid "Best of !index"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:429
+msgid "Match rules"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:436 darts_competition/darts_competition.module:137
+msgid "Restart competition"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:437
+msgid "Click to restart the competition"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:470 darts_competition/darts_competition.pages.inc:47 darts_donhn/darts_donhn.module:260
+msgid "No results found."
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:480
+msgid "With selected results"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:484
+msgid "Delete"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:495
+msgid "No results selected."
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:506
+msgid "Selected results deleted."
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:514
+msgid "Home player"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:515
+msgid "Away player"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:551
+msgid "Are you sure you want to restart the competition?"
+msgstr ""
+
+#: darts_competition/darts_competition.admin.inc:569
+msgid "Competition successfully restarted."
+msgstr ""
+
+#: darts_competition/darts_competition.pages.inc:68;115;156 darts_donhn/darts_donhn.pages.inc:73
+msgid "Rank"
+msgstr ""
+
+#: darts_competition/darts_competition.pages.inc:70 darts_donhn/darts_donhn.pages.inc:75
+msgid "Games played"
+msgstr ""
+
+#: darts_competition/darts_competition.pages.inc:71
+msgid "Games won"
+msgstr ""
+
+#: darts_competition/darts_competition.pages.inc:72
+msgid "Legs played"
+msgstr ""
+
+#: darts_competition/darts_competition.pages.inc:73
+msgid "Legs won"
+msgstr ""
+
+#: darts_competition/darts_competition.pages.inc:91 darts_competition/darts_competition.module:271
+msgid "No players found."
+msgstr ""
+
+#: darts_competition/darts_competition.pages.inc:117
+msgid "Count"
+msgstr ""
+
+#: darts_competition/darts_competition.pages.inc:126;142;167;183
+msgid "No statistics found"
+msgstr ""
+
+#: darts_competition/darts_competition.pages.inc:152
+msgid "Highest finishes"
+msgstr ""
+
+#: darts_competition/darts_competition.pages.inc:153
+msgid "Fastest finishes"
+msgstr ""
+
+#: darts_competition/darts_competition.module:182
+msgid "Competition statistics"
+msgstr ""
+
+#: darts_competition/darts_competition.module:225
+msgid "Competition: top 3 players"
+msgstr ""
+
+#: darts_competition/darts_competition.module:245
+msgid "Remove from competition"
+msgstr ""
+
+#: darts_competition/darts_competition.module:270
+msgid "Competition ranking"
+msgstr ""
+
+#: darts_competition/darts_competition.module:286
+msgid "more..."
+msgstr ""
+
+#: darts_competition/darts_competition.module:348
+msgid "!home against !away"
+msgstr ""
+
+#: darts_competition/darts_competition.module:153
+msgid "edit competition result"
+msgstr ""
+
+#: darts_competition/darts_competition.module:154
+msgid "administer local competition"
+msgstr ""
+
+#: darts_competition/darts_competition.module:15;100 darts_competition/darts_competition.info:0
+msgid "Local competition"
+msgstr ""
+
+#: darts_competition/darts_competition.module:16
+msgid "The local competition"
+msgstr ""
+
+#: darts_competition/darts_competition.module:23;113 darts_donhn/darts_donhn.admin.inc:27 darts_donhn/darts_donhn.pages.inc:61 darts_donhn/darts_donhn.module:40
+msgid "Results"
+msgstr ""
+
+#: darts_competition/darts_competition.module:24
+msgid "Overview of the matches that were played up to now."
+msgstr ""
+
+#: darts_competition/darts_competition.module:29 darts_donhn/darts_donhn.pages.inc:102
+msgid "Ranking"
+msgstr ""
+
+#: darts_competition/darts_competition.module:30
+msgid "Ranking for the local competition."
+msgstr ""
+
+#: darts_competition/darts_competition.module:39
+msgid "Statistics for the local competition."
+msgstr ""
+
+#: darts_competition/darts_competition.module:48
+msgid "Top throws"
+msgstr ""
+
+#: darts_competition/darts_competition.module:49
+msgid "List the top players in 100+, 140+ and 180 throws."
+msgstr ""
+
+#: darts_competition/darts_competition.module:54
+msgid "Top finishes"
+msgstr ""
+
+#: darts_competition/darts_competition.module:55
+msgid "List the top players in 100+ finishes."
+msgstr ""
+
+#: darts_competition/darts_competition.module:75
+msgid "Result details"
+msgstr ""
+
+#: darts_competition/darts_competition.module:84 darts_donhn/darts_donhn.module:108
+msgid "View"
+msgstr ""
+
+#: darts_competition/darts_competition.module:85
+msgid "View the result details."
+msgstr ""
+
+#: darts_competition/darts_competition.module:90 darts_donhn/darts_donhn.module:70;114
+msgid "Edit"
+msgstr ""
+
+#: darts_competition/darts_competition.module:91 darts_donhn/darts_donhn.module:115
+msgid "Edit the result details."
+msgstr ""
+
+#: darts_competition/darts_competition.module:101
+msgid "Manage the local darts competition."
+msgstr ""
+
+#: darts_competition/darts_competition.module:109 darts_donhn/darts_donhn.module:134
+msgid "Settings"
+msgstr ""
+
+#: darts_competition/darts_competition.module:114
+msgid "Manage the results in the local darts competition."
+msgstr ""
+
+#: darts_competition/darts_competition.module:127
+msgid "Add new"
+msgstr ""
+
+#: darts_competition/darts_competition.module:128
+msgid "Add a new result to the local darts competition."
+msgstr ""
+
+#: darts_competition/darts_competition.module:138
+msgid "Remove all results and statistics from the competition."
+msgstr ""
+
+#: darts_competition/darts_competition.info:0
+msgid "Administer a local darts competition"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:17
+msgid "Reset the DONHN competition"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:18
+msgid "Click to reset the DONHN competition"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:27
+msgid "This will remove all"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:27 darts_donhn/darts_donhn.module:140
+msgid "Teams"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:29
+msgid "Are you sure you want to reset the DONHN competition?"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:38
+msgid "DONHN competition reset."
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:64
+msgid "add result"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:70 darts_donhn/darts_donhn.module:244
+msgid "No teams found."
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:80
+msgid "With selected teams"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:95 darts_donhn/darts_donhn.pages.inc:74
+msgid "Team"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:96;161 darts_donhn/darts_donhn.pages.inc:128
+msgid "Division"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:97 darts_donhn/darts_donhn.pages.inc:140
+msgid "Captain"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:174
+msgid "Update division"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:182
+msgid "Team name"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:197
+msgid "Update team name"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:207
+msgid "Team captain"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:215
+msgid "Contact information"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:216
+msgid "Information on how this team can be contacted. Most likely the contact information of the team captain."
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:221 darts_donhn/darts_donhn.pages.inc:146
+msgid "E-Mail address"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:227;259 darts_donhn/darts_donhn.pages.inc:152;178
+msgid "Telephone number"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:235;398 darts_donhn/darts_donhn.pages.inc:159
+msgid "Location"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:236
+msgid "Information on the location where the team plays its home matches."
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:247 darts_donhn/darts_donhn.pages.inc:171
+msgid "Address"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:253
+msgid "City"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:267
+msgid "Save team"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:294
+msgid "Could not save team."
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:333
+msgid "Team was saved successfully."
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:401 darts_donhn/darts_donhn.pages.inc:13
+msgid "Away"
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:417
+msgid "The opposing team you selected is the same as the team for which you are trying to enter the result."
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:420
+msgid "You have not selected an opposing team."
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:423
+msgid "The combined scores do not equal 9."
+msgstr ""
+
+#: darts_donhn/darts_donhn.admin.inc:439
+msgid "Could not save the result."
+msgstr ""
+
+#: darts_donhn/darts_donhn.pages.inc:20
+msgid "Could not find results."
+msgstr ""
+
+#: darts_donhn/darts_donhn.pages.inc:62
+msgid "Could not find resuls for this team."
+msgstr ""
+
+#: darts_donhn/darts_donhn.pages.inc:68
+msgid "Could not get ranking."
+msgstr ""
+
+#: darts_donhn/darts_donhn.pages.inc:76
+msgid "Points"
+msgstr ""
+
+#: darts_donhn/darts_donhn.pages.inc:77
+msgid "Penalties"
+msgstr ""
+
+#: darts_donhn/darts_donhn.pages.inc:122
+msgid "Association"
+msgstr ""
+
+#: darts_donhn/darts_donhn.pages.inc:135
+msgid "Contact"
+msgstr ""
+
+#: darts_donhn/darts_donhn.pages.inc:172
+msgid "find on map"
+msgstr ""
+
+#: darts_donhn/darts_donhn.pages.inc:188
+msgid "No statistics found."
+msgstr ""
+
+#: darts_donhn/darts_donhn.pages.inc:195
+msgid "Could not look up teams."
+msgstr ""
+
+#: darts_donhn/darts_donhn.pages.inc:204
+msgid "Division !division"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:221
+msgid "DONHN: latest result per team."
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:243
+msgid "Latest results"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:263
+msgid "@date: @score !result against @opponent"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:266
+msgid "win"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:266
+msgid "loss"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:356
+msgid "!team against !opponent"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:439
+msgid "Select a division..."
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:570
+msgid "Add players to team"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:571
+msgid "Remove players from team"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:198
+msgid "edit own donhn team"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:199
+msgid "administer donhn competition"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:22;125 darts_donhn/darts_donhn.info:0
+msgid "DONHN competition"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:23
+msgid "View the teams that are active in the DONHN competition."
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:30
+msgid "Team information"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:41
+msgid "View the team results."
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:50
+msgid "Information"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:51
+msgid "View information on the team: who is the captain, where do they play, etc."
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:71
+msgid "Edit the team details."
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:81
+msgid "Edit information"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:86
+msgid "Add result"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:87
+msgid "Add a competition result for this team."
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:99
+msgid "Result information"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:109
+msgid "View the details of the result."
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:126
+msgid "Administer the DONHN competition"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:135
+msgid "Administer settings related to the DONHN competition."
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:141
+msgid "Manage the teams that are active in a DONHN competition."
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:155
+msgid "Add"
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:156
+msgid "Add a new team that is active in a DONHN competition."
+msgstr ""
+
+#: darts_donhn/darts_donhn.module:165
+msgid "Reset DONHN competition"
+msgstr ""
+
+#: darts_donhn/darts_donhn.info:0
+msgid "Administer teams in the DONHN competition"
+msgstr ""
+
+#: darts_donhn/templates/darts-donhn-result.tpl.php:19
+msgid "Played on %date"
+msgstr ""
+
