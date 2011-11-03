@@ -178,7 +178,9 @@ function darts_donhn_menu() {
 function darts_donhn_theme() {
     return array(
         'darts_donhn_admin_teams' => array(
-            'arguments' => array('form' => null),
+            'file' => 'darts_donhn.admin.inc'
+        ),
+        'darts_player_select_fieldset' => array(
             'file' => 'darts_donhn.admin.inc'
         ),
         'darts_donhn_result' => array(
@@ -301,7 +303,7 @@ function darts_donhn_team_load($team_id) {
 
     $data = db_query('SELECT u.uid, u.name FROM {darts_donhn_team_players} t LEFT JOIN {users} u ON t.uid = u.uid ORDER BY u.name DESC');
     while (($player = db_fetch_object($data)) !== false) {
-        $team['players'][$player->uid] = $player->name;
+        $team['players'][$player->uid] = $player;
     }
 
     return $team;

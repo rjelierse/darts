@@ -147,6 +147,16 @@ function darts_donhn_team_edit($form_state, $team = array()) {
         $team_name = 0;
     }
 
+    if (isset($form_state['storage']['captain_uid'])) {
+        $captain_uid = $form_state['storage']['captain_uid'];
+    }
+    elseif (!empty($team)) {
+        $captain_uid = $team['captain_uid'];
+    }
+    else {
+        $captain_uid = 0;
+    }
+
     $form['#prefix'] = '<div id="darts-team-wrapper">';
     $form['#suffix'] = '</div>';
     $form['#tree'] = true;
@@ -206,8 +216,13 @@ function darts_donhn_team_edit($form_state, $team = array()) {
             '#type' => 'select',
             '#title' => t('Team captain'),
             '#options' => darts_get_players(true),
-            '#default_value' => isset($form_state['storage']['captain_uid']) ? $form_state['storage']['captain_uid'] : (!empty($team['captain_uid']) ? $team['captain_uid'] : 0),
-            '#required' => true
+            '#default_value' => $captain_uid,
+            '#required' => true,
+            '#ahah' => array(
+                'event' => 'change',
+                'path' => ahah_helper_path(),
+                'wrapper' => 'darts-team-wrapper'
+            )
         );
 
         $form['contact'] = array(
@@ -260,6 +275,21 @@ function darts_donhn_team_edit($form_state, $team = array()) {
             '#maxlength' => 10,
             '#default_value' => isset($form_state['storage']['location']['location_phone']) ? $form_state['storage']['location']['location_phone'] : $team['location_phone']
         );
+        $form['players'] = array(
+            '#type' => 'fieldset',
+            '#title' => t('Players'),
+            '#theme' => 'darts_player_select_fieldset'
+        );
+        $form['players']['player_select']['#tree'] = true;
+        foreach (darts_get_players() as $uid => $name) {
+            $form['players']['player_select'][$uid] = array(
+                '#type' => 'checkbox',
+                '#return_value' => $uid,
+                '#default_value' => (isset($team['players'][$uid]) || ($captain_uid == $uid)) ? $uid : 0,
+                '#disabled' => ($captain_uid == $uid)
+            );
+            $form['players']['player_name'][$uid] = array('#value' => $name);
+        }
     }
 
     $form['save'] = array(
@@ -271,6 +301,17 @@ function darts_donhn_team_edit($form_state, $team = array()) {
     $form['#submit'][] = 'darts_donhn_team_edit_submit';
 
     return $form;
+}
+
+function darts_donhn_team_edit_validate($form, &$form_state) {
+    dpm($form_state, 'validate-form-state');
+    $form_state['values']['players']['player_select'] = array_filter($form_state['values']['players']['player_select']);
+    if (empty($form_state['values']['players']['player_select'])) {
+        form_set_error('', t('Please select the players for the team.'));
+    }
+    elseif (count($form_state['values']['players']['player_select']) < 4) {
+        form_set_error('', t('Not enough players selected. A team needs at least four players.'));
+    }
 }
 
 /**
@@ -295,19 +336,12 @@ function darts_donhn_team_edit_submit($form, &$form_state) {
         drupal_goto('admin/content/darts/teams');
     }
 
-    // New team, add captain as player to the team.
-    if (empty($key)) {
+    // Empty the current list of team players, then save the new list.
+    db_query('DELETE FROM {darts_donhn_team_players} WHERE team_id = %d', $team['team_id']);
+    foreach ($form_state['values']['players']['player_select'] as $uid) {
         $team_player = array(
             'team_id' => $team['team_id'],
-            'uid' => $team['captain_uid']
-        );
-        drupal_write_record('darts_donhn_team_players', $team_player);
-    }
-    // Existing team, new captain who was not previously part of the team. Add captain as team player.
-    elseif (($team_player = db_fetch_array(db_query('SELECT * FROM {darts_donhn_team_players} WHERE team_id = %d AND uid = %d', $team['team_id'], $team['captain_uid']))) === false) {
-        $team_player = array(
-            'team_id' => $team['team_id'],
-            'uid' => $team['captain_uid']
+            'uid' => $uid
         );
         drupal_write_record('darts_donhn_team_players', $team_player);
     }
@@ -333,6 +367,28 @@ function darts_donhn_team_edit_submit($form, &$form_state) {
     drupal_set_message(t('Team was saved successfully.'));
     drupal_goto($path);
 }
+
+function theme_darts_player_select_fieldset($fields) {
+    $content = '';
+    $rows = array();
+    if (is_array($fields['player_select']) && !empty($fields['player_select'])) {
+        foreach (element_children($fields['player_select']) as $uid) {
+            $rows[] = array(
+                array('data' => drupal_render($fields['player_select'][$uid]), 'width' => 20),
+                drupal_render($fields['player_name'][$uid])
+            );
+        }
+        $content .= theme('table', array(), $rows);
+    }
+    else {
+        $content .= t('No players available.');
+    }
+
+    $content .= drupal_render($fields);
+
+    return $content;
+}
+
 /**
  * Build the form to edit a team result for the DONHN competition.
  *

@@ -133,7 +133,7 @@ function darts_donhn_team_information($team) {
     $items['contact'] = array(
         '#type' => 'user_profile_category',
         '#title' => t('Contact'),
-        '#weight' => -49
+        '#weight' => -40
     );
     $items['contact']['captain'] = array(
         '#type' => 'user_profile_item',
@@ -158,7 +158,7 @@ function darts_donhn_team_information($team) {
         '#type' => 'user_profile_category',
         '#title' => t('Location'),
         '#value' => theme('team_location_information', $team),
-        '#weight' => -48
+        '#weight' => -30
     );
     $items['location']['name'] = array(
         '#type' => 'user_profile_item',
@@ -180,6 +180,12 @@ function darts_donhn_team_information($team) {
             '#weight' => -48
         );
     }
+    $items['players'] = array(
+        '#type' => 'section',
+        '#title' => t('Players'),
+        '#value' => theme('user_list', $team['players']),
+        '#weight' => -45
+    );
 
     return drupal_render($items);
 }
