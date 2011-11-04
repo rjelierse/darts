@@ -10,6 +10,7 @@ function darts_donhn_install() {
 function darts_donhn_uninstall() {
     drupal_uninstall_schema('darts_donhn');
     cache_clear_all('darts_donhn_', 'cache', TRUE);
+    variable_del('darts_donhn_teams_cache_ttl');
 }
 
 function darts_donhn_schema() {

@@ -541,7 +541,7 @@ function darts_donhn_competition_get_ranking($division) {
 
     // Update cache
     $donhn_teams[$division] = $teams;
-    $expiration = strtotime('+7 days');
+    $expiration = strtotime(variable_get('darts_donhn_teams_cache_ttl', '+7 days'));
     cache_set('darts_donhn_teams', $donhn_teams, 'cache', $expiration);
 
     return $teams;

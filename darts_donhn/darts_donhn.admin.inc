@@ -12,6 +12,19 @@
 function darts_donhn_admin_settings($form_state) {
     $form = array();
 
+    $form['darts_donhn_teams_cache_ttl'] = array(
+        '#type' => 'select',
+        '#title' => t('Time to keep divisions ranking in cache'),
+        '#description' => t('How long until the team ranking is refreshed from the DONHN website. Note: the current cache will remain valid for the previously set expiration time. The new setting will take effect thereafter.'),
+        '#options' => array(
+            '+12 hours' => t('12 hours'),
+            '+1 day' => t('1 day'),
+            '+3 days' => t('3 days'),
+            '+7 days' => t('1 week')
+        ),
+        '#default_value' => variable_get('darts_donhn_teams_cache_ttl', '+7 days')
+    );
+
     $form['reset_donhn'] = array(
         '#type' => 'item',
         '#title' => t('Reset the DONHN competition'),

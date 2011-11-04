@@ -20,8 +20,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Drupal Darts module\n"
-"POT-Creation-Date: 2011-11-02 17:21+0100\n"
-"PO-Revision-Date: 2011-11-02 18:00+0100\n"
+"POT-Creation-Date: 2011-11-04 07:38+0100\n"
+"PO-Revision-Date: 2011-11-04 08:00+0100\n"
 "Last-Translator: Raymond Jelierse <r.jelierse@sparse.nl>\n"
 "Language-Team: Dutch <nl@drupal.org>\n"
 "MIME-Version: 1.0\n"
@@ -727,7 +727,7 @@ msgstr "Bekijk de details van de uitslag."
 
 #: darts_donhn/darts_donhn.module:126
 msgid "Administer the DONHN competition"
-msgstr "Beheerd de DONHN competitie"
+msgstr "Beheer de DONHN competitie"
 
 #: darts_donhn/darts_donhn.module:135
 msgid "Administer settings related to the DONHN competition."
@@ -744,6 +744,30 @@ msgstr "Toevoegen"
 #: darts_donhn/darts_donhn.module:156
 msgid "Add a new team that is active in a DONHN competition."
 msgstr "Voeg een nieuw team toe dat actief is in een DONHN competitie."
+
+#: darts_donhn/darts_donhn.admin.inc:17
+msgid "Time to keep divisions ranking in cache"
+msgstr "Levensduur cache competitiestand"
+
+#: darts_donhn/darts_donhn.admin.inc:18
+msgid "How long until the team ranking is refreshed from the DONHN website. Note: the current cache will remain valid for the previously set expiration time. The new setting will take effect thereafter."
+msgstr "Hoe lang het duurt voordat de team stand wordt ververst vanaf de DONHN website. NB: de huidige cache blijft geldig voor de hiervoor geldende tijdsduur. De nieuwe instelling zal daarna actief worden."
+
+#: darts_donhn/darts_donhn.admin.inc:20
+msgid "12 hours"
+msgstr "12 uur"
+
+#: darts_donhn/darts_donhn.admin.inc:21
+msgid "1 day"
+msgstr "1 dag"
+
+#: darts_donhn/darts_donhn.admin.inc:22
+msgid "3 days"
+msgstr "3 dagen"
+
+#: darts_donhn/darts_donhn.admin.inc:23
+msgid "1 week"
+msgstr "1 week"
 
 #: darts_donhn/darts_donhn.module:165
 msgid "Reset DONHN competition"
