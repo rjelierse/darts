@@ -317,7 +317,6 @@ function darts_donhn_team_edit($form_state, $team = array()) {
 }
 
 function darts_donhn_team_edit_validate($form, &$form_state) {
-    dpm($form_state, 'validate-form-state');
     $form_state['values']['players']['player_select'] = array_filter($form_state['values']['players']['player_select']);
     if (empty($form_state['values']['players']['player_select'])) {
         form_set_error('', t('Please select the players for the team.'));
@@ -337,34 +336,47 @@ function darts_donhn_team_edit_validate($form, &$form_state) {
 function darts_donhn_team_edit_submit($form, &$form_state) {
     $fields = array('team_id', 'team_name', 'division', 'captain_uid', 'captain_mail', 'captain_phone', 'location_name', 'location_address', 'location_city', 'location_phone');
 
-    $team = array();
+    $update = array();
     foreach ($fields as $field) {
-        $team[$field] = $form_state['values'][$field];
+        $update[$field] = $form_state['values'][$field];
     }
 
-    $key = ($team['team_id'] > 0) ? array('team_id') : array();
+    if ($update['team_id'] > 0) {
+        $team = darts_donhn_team_load($update['team_id']);
+    }
 
-    if (drupal_write_record('darts_donhn_teams', $team, $key) === false) {
+    $key = ($update['team_id'] > 0) ? array('team_id') : array();
+
+    if (drupal_write_record('darts_donhn_teams', $update, $key) === false) {
         drupal_set_message(t('Could not save team.'), 'error');
         drupal_goto('admin/content/darts/teams');
     }
 
     // Empty the current list of team players, then save the new list.
-    db_query('DELETE FROM {darts_donhn_team_players} WHERE team_id = %d', $team['team_id']);
+    db_query('DELETE FROM {darts_donhn_team_players} WHERE team_id = %d', $update['team_id']);
     foreach ($form_state['values']['players']['player_select'] as $uid) {
         $team_player = array(
-            'team_id' => $team['team_id'],
+            'team_id' => $update['team_id'],
             'uid' => $uid
         );
         drupal_write_record('darts_donhn_team_players', $team_player);
     }
 
-    $path = 'darts/donhn/'.$team['team_id'];
+    // Update captain permissions
+    $rid = variable_get('darts_role_team_captain', false);
+    if ($rid && !empty($team) && ($update['captain_uid'] != $team['captain_uid'])) {
+        db_query('DELETE FROM {users_roles} WHERE uid = %d AND rid = %d');
+    }
+    if ($rid && ($update['captain_uid'] != $team['captain_uid'])) {
+        db_query('INSERT INTO {users_roles} (rid, uid) VALUES(%d, %d)', $rid, $update['captain_uid']);
+    }
+
+    $path = 'darts/donhn/'.$update['team_id'];
 
     // Build menu item
     $link = array(
         'link_path' => $path,
-        'link_title' => $team['team_name'],
+        'link_title' => $update['team_name'],
         'menu_name' => 'primary-links'
     );
 
