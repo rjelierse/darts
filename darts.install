@@ -1,0 +1,65 @@
+<?php
+/**
+ * Darts module: installation routines.
+ */
+ 
+function darts_install() {
+    // Add club manager
+    db_query("INSERT INTO {role} (name) VALUES ('%s')", t('Club manager'));
+    $rid = db_last_insert_id('role', 'rid');
+    variable_set('darts_role_club_manager', $rid);
+    db_query("INSERT INTO {permission} (rid, perm) VALUES (%d, 'access administration menu, administer darts players, administer local competition, edit competition result, administer donhn competition, create event, delete any event, edit any event, create story content, delete any story content, edit any story content, access administration pages')", $rid);
+    // Add local competition manager
+    db_query("INSERT INTO {role} (name) VALUES ('%s')", t('Competition manager'));
+    $rid = db_last_insert_id('role', 'rid');
+    variable_set('darts_role_competition_manager', $rid);
+    db_query("INSERT INTO {permission} (rid, perm) VALUES (%d, 'access administration menu, administer darts players, administer local competition, edit competition result, create event, delete own event, edit own events, create story content, delete own story content, edit own story content, access administration pages')", $rid);
+    // Add DONHN competition manager
+    db_query("INSERT INTO {role} (name) VALUES ('%s')", t('DONHN manager'));
+    $rid = db_last_insert_id('role', 'rid');
+    variable_set('darts_role_donhn_manager', $rid);
+    db_query("INSERT INTO {permission} (rid, perm) VALUES (%d, 'access administration menu, administer darts players, administer donhn competition, create event, delete own event, edit own events, create story content, delete own story content, edit own story content, access administration pages')", $rid);
+    // Add team captain
+    db_query("INSERT INTO {role} (name) VALUES ('%s')", t('Team captain'));
+    $rid = db_last_insert_id('role', 'rid');
+    variable_set('darts_role_team_captain', $rid);
+    db_query("INSERT INTO {permission} (rid, perm) VALUES (%d, 'edit own donhn team, delete own event, edit own events, create story content, delete own story content, edit own story content')", $rid);
+}
+
+function darts_uninstall() {
+    foreach(array('club_manager', 'competition_manager', 'donhn_manager', 'team_captain') as $suffix) {
+        $rid = variable_get('darts_role_'.$suffix, false);
+        if ($rid !== false) {
+            db_query('DELETE FROM {role} WHERE rid = %d', $rid);
+            db_query('DELETE FROM {permission} WHERE rid = %d', $rid);
+        }
+        variable_del('darts_role_'.$suffix);
+    }
+}
+
+function darts_update_6000() {
+    $ret = array();
+
+    // Add club manager
+    db_query("INSERT INTO {role} (name) VALUES ('%s')", t('Club manager'));
+    $rid = db_last_insert_id('role', 'rid');
+    variable_set('darts_role_club_manager', $rid);
+    db_query("INSERT INTO {permission} (rid, perm) VALUES (%d, 'access administration menu, administer darts players, administer local competition, edit competition result, administer donhn competition, create event, delete any event, edit any event, create story content, delete any story content, edit any story content, access administration pages')", $rid);
+    // Add local competition manager
+    db_query("INSERT INTO {role} (name) VALUES ('%s')", t('Competition manager'));
+    $rid = db_last_insert_id('role', 'rid');
+    variable_set('darts_role_competition_manager', $rid);
+    db_query("INSERT INTO {permission} (rid, perm) VALUES (%d, 'access administration menu, administer darts players, administer local competition, edit competition result, create event, delete own event, edit own events, create story content, delete own story content, edit own story content, access administration pages')", $rid);
+    // Add DONHN competition manager
+    db_query("INSERT INTO {role} (name) VALUES ('%s')", t('DONHN manager'));
+    $rid = db_last_insert_id('role', 'rid');
+    variable_set('darts_role_donhn_manager', $rid);
+    db_query("INSERT INTO {permission} (rid, perm) VALUES (%d, 'access administration menu, administer darts players, administer donhn competition, create event, delete own event, edit own events, create story content, delete own story content, edit own story content, access administration pages')", $rid);
+    // Add team captain
+    db_query("INSERT INTO {role} (name) VALUES ('%s')", t('Team captain'));
+    $rid = db_last_insert_id('role', 'rid');
+    variable_set('darts_role_team_captain', $rid);
+    db_query("INSERT INTO {permission} (rid, perm) VALUES (%d, 'edit own donhn team, delete own event, edit own events, create story content, delete own story content, edit own story content')", $rid);
+
+    return $ret;
+}

@@ -295,8 +295,12 @@ function template_preprocess_darts_frontpage(&$variables) {
 
 function darts_player_edit($form_state = array(), $player = null) {
     $form = array();
-    $roles = user_roles(TRUE);
-    unset($roles[DRUPAL_AUTHENTICATED_RID]);
+    $roles = array(
+        0 => t('Player'),
+        variable_get('darts_role_club_manager', 0) => t('Club manager'),
+        variable_get('darts_role_competition_manager', 0) => t('Competition manager'),
+        variable_get('darts_role_donhn_manager', 0) => t('DONHN manager')
+    );
 
     if (is_object($player)) {
         foreach(array_keys($roles) as $rid) {
@@ -305,9 +309,6 @@ function darts_player_edit($form_state = array(), $player = null) {
             }
         }
     }
-
-    $roles[0] = t('Player');
-    ksort($roles);
 
     $form['uid'] = array(
         '#type' => 'value',

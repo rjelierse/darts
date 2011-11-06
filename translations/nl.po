@@ -89,9 +89,21 @@ msgstr "Selecteer een speler..."
 msgid "Failed to load block %block"
 msgstr "Kon block %block niet laden."
 
-#: darts.module:309 darts_competition/darts_competition.pages.inc:116;157
+#: darts.module:299 darts_competition/darts_competition.pages.inc:116;157
 msgid "Player"
 msgstr "Speler"
+
+#: darts.module:300 darts.install:8;44
+msgid "Club manager"
+msgstr "Club manager"
+
+#: darts.module:301 darts.install:13;49
+msgid "Competition manager"
+msgstr "Competitie manager"
+
+#: darts.module:302 darts.install:18;54
+msgid "DONHN manager"
+msgstr "DONHN manager"
 
 #: darts.module:324
 msgid "Naam"
@@ -172,6 +184,10 @@ msgstr "Speler toevoegen"
 #: darts.module:47
 msgid "Add a new player."
 msgstr "Voeg een nieuwe speler toe."
+
+#: darts.install:23;59 darts_donhn/darts_donhn.admin.inc:230
+msgid "Team captain"
+msgstr "Team captain"
 
 #: darts.info:0
 msgid "Support functions"

@@ -12,6 +12,7 @@
 #  darts_competition/darts_competition.admin.inc: n/a
 #  darts_donhn/darts_donhn.admin.inc: n/a
 #  darts_donhn/darts_donhn.pages.inc: n/a
+#  darts.install: n/a
 #  darts_donhn/darts_donhn.module: n/a
 #  darts_competition/darts_competition_result.tpl.php: n/a
 #  darts_donhn/templates/darts-donhn-result.tpl.php: n/a
@@ -20,7 +21,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2011-11-04 07:38+0100\n"
+"POT-Creation-Date: 2011-11-06 18:43+0100\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -89,47 +90,59 @@ msgstr ""
 msgid "Failed to load block %block"
 msgstr ""
 
-#: darts.module:309 darts_competition/darts_competition.pages.inc:116;157
+#: darts.module:299 darts_competition/darts_competition.pages.inc:116;157
 msgid "Player"
 msgstr ""
 
-#: darts.module:324
+#: darts.module:300 darts.install:8;44
+msgid "Club manager"
+msgstr ""
+
+#: darts.module:301 darts.install:13;49
+msgid "Competition manager"
+msgstr ""
+
+#: darts.module:302 darts.install:18;54
+msgid "DONHN manager"
+msgstr ""
+
+#: darts.module:325
 msgid "Naam"
 msgstr ""
 
-#: darts.module:326
+#: darts.module:327
 msgid "Spaces are allowed; punctuation is not allowed except for periods, hyphens, and underscores."
 msgstr ""
 
-#: darts.module:335
+#: darts.module:336
 msgid "Role"
 msgstr ""
 
-#: darts.module:344
+#: darts.module:345
 msgid "E-mail address"
 msgstr ""
 
-#: darts.module:345
+#: darts.module:346
 msgid "The e-mail address on which the player can be contacted. Note: this is only required for players that have additional permissions."
 msgstr ""
 
-#: darts.module:352
+#: darts.module:353
 msgid "Save player"
 msgstr ""
 
-#: darts.module:352
+#: darts.module:353
 msgid "Create player"
 msgstr ""
 
-#: darts.module:389
+#: darts.module:390
 msgid "Could not save player."
 msgstr ""
 
-#: darts.module:395
+#: darts.module:396
 msgid "Password and further instructions have been e-mailed to the new user <a href=\"@url\">%name</a>."
 msgstr ""
 
-#: darts.module:398
+#: darts.module:399
 msgid "Created a new user account for <a href=\"@url\">%name</a>. No e-mail has been sent."
 msgstr ""
 
@@ -137,7 +150,7 @@ msgstr ""
 msgid "administer darts players"
 msgstr ""
 
-#: darts.module:16 darts_donhn/darts_donhn.admin.inc:469 darts_donhn/darts_donhn.pages.inc:12
+#: darts.module:16 darts_donhn/darts_donhn.admin.inc:481 darts_donhn/darts_donhn.pages.inc:12
 msgid "Home"
 msgstr ""
 
@@ -173,6 +186,10 @@ msgstr ""
 msgid "Add a new player."
 msgstr ""
 
+#: darts.install:23;59 darts_donhn/darts_donhn.admin.inc:230
+msgid "Team captain"
+msgstr ""
+
 #: darts.info:0
 msgid "Support functions"
 msgstr ""
@@ -181,7 +198,7 @@ msgstr ""
 msgid "Manage the Darts module and its subpackages"
 msgstr ""
 
-#: darts_competition/darts_competition_result.tpl.php:20 darts_donhn/darts_donhn.admin.inc:442 darts_donhn/templates/darts-donhn-result.tpl.php:21
+#: darts_competition/darts_competition_result.tpl.php:20 darts_donhn/darts_donhn.admin.inc:454 darts_donhn/templates/darts-donhn-result.tpl.php:21
 msgid "Result"
 msgstr ""
 
@@ -189,7 +206,7 @@ msgstr ""
 msgid "Statistics"
 msgstr ""
 
-#: darts_competition/darts_competition.admin.inc:23;513 darts_competition/darts_competition.pages.inc:21 darts_donhn/darts_donhn.admin.inc:429 darts_donhn/darts_donhn.pages.inc:11
+#: darts_competition/darts_competition.admin.inc:23;513 darts_competition/darts_competition.pages.inc:21 darts_donhn/darts_donhn.admin.inc:441 darts_donhn/darts_donhn.pages.inc:11
 msgid "Date"
 msgstr ""
 
@@ -201,7 +218,7 @@ msgstr ""
 msgid "Player two"
 msgstr ""
 
-#: darts_competition/darts_competition.admin.inc:45 darts_donhn/darts_donhn.admin.inc:478
+#: darts_competition/darts_competition.admin.inc:45 darts_donhn/darts_donhn.admin.inc:490
 msgid "Save result"
 msgstr ""
 
@@ -545,10 +562,6 @@ msgstr ""
 msgid "Update team name"
 msgstr ""
 
-#: darts_donhn/darts_donhn.admin.inc:230
-msgid "Team captain"
-msgstr ""
-
 #: darts_donhn/darts_donhn.admin.inc:243
 msgid "Contact information"
 msgstr ""
@@ -565,7 +578,7 @@ msgstr ""
 msgid "Telephone number"
 msgstr ""
 
-#: darts_donhn/darts_donhn.admin.inc:263;467 darts_donhn/darts_donhn.pages.inc:159
+#: darts_donhn/darts_donhn.admin.inc:263;479 darts_donhn/darts_donhn.pages.inc:159
 msgid "Location"
 msgstr ""
 
@@ -585,43 +598,43 @@ msgstr ""
 msgid "Save team"
 msgstr ""
 
-#: darts_donhn/darts_donhn.admin.inc:323
+#: darts_donhn/darts_donhn.admin.inc:322
 msgid "Please select the players for the team."
 msgstr ""
 
-#: darts_donhn/darts_donhn.admin.inc:326
+#: darts_donhn/darts_donhn.admin.inc:325
 msgid "Not enough players selected. A team needs at least four players."
 msgstr ""
 
-#: darts_donhn/darts_donhn.admin.inc:348
+#: darts_donhn/darts_donhn.admin.inc:351
 msgid "Could not save team."
 msgstr ""
 
-#: darts_donhn/darts_donhn.admin.inc:380
+#: darts_donhn/darts_donhn.admin.inc:392
 msgid "Team was saved successfully."
 msgstr ""
 
-#: darts_donhn/darts_donhn.admin.inc:397
+#: darts_donhn/darts_donhn.admin.inc:409
 msgid "No players available."
 msgstr ""
 
-#: darts_donhn/darts_donhn.admin.inc:470 darts_donhn/darts_donhn.pages.inc:13
+#: darts_donhn/darts_donhn.admin.inc:482 darts_donhn/darts_donhn.pages.inc:13
 msgid "Away"
 msgstr ""
 
-#: darts_donhn/darts_donhn.admin.inc:486
+#: darts_donhn/darts_donhn.admin.inc:498
 msgid "The opposing team you selected is the same as the team for which you are trying to enter the result."
 msgstr ""
 
-#: darts_donhn/darts_donhn.admin.inc:489
+#: darts_donhn/darts_donhn.admin.inc:501
 msgid "You have not selected an opposing team."
 msgstr ""
 
-#: darts_donhn/darts_donhn.admin.inc:492
+#: darts_donhn/darts_donhn.admin.inc:504
 msgid "The combined scores do not equal 9."
 msgstr ""
 
-#: darts_donhn/darts_donhn.admin.inc:508
+#: darts_donhn/darts_donhn.admin.inc:520
 msgid "Could not save the result."
 msgstr ""
 
