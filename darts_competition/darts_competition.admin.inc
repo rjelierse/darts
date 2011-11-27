@@ -14,6 +14,10 @@ function darts_competition_result_edit($form_state, $result = array()) {
     $form = array();
 
     // Store the result
+    $form['result'] = array(
+        '#type' => 'value',
+        '#value' => $result
+    );
     $form['result_id'] = array(
         '#type' => 'value',
         '#value' => !empty($result) ? $result['result_id'] : 0
@@ -113,15 +117,13 @@ function darts_competition_result_player_fieldset($prefix, $result = array()) {
     );
 
     // Prepare list of statistics
-    if (!is_array($result[$prefix.'finishes'])) {
-        $keys = array();
-        for ($i = -1; $i >= -$limit; $i--) { $keys[] = $i; }
-        $result[$prefix.'finishes'] = array_fill_keys($keys, 0);
+    $count = is_array($result[$prefix.'finishes']) ? $limit - count($result[$prefix.'finishes'])  : $limit;
+    for ($i = -1; $i >= -$count; $i--) {
+        $result[$prefix.'finishes'][$i] = 0;
     }
-    if (!is_array($result[$prefix.'darts'])) {
-        $keys = array();
-        for ($i = -1; $i >= -$limit; $i--) { $keys[] = $i; }
-        $result[$prefix.'darts'] = array_fill_keys($keys, 0);
+    $count = is_array($result[$prefix.'darts']) ? $limit - count($result[$prefix.'darts'])  : $limit;
+    for ($i = -1; $i >= -$count; $i--) {
+        $result[$prefix.'darts'][$i] = 0;
     }
 
     $set['statistics'][$prefix.'finishes'] = array(
@@ -182,6 +184,7 @@ function darts_competition_result_edit_validate($form, &$form_state) {
  * @return void Nothing.
  */
 function darts_competition_result_edit_submit($form, &$form_state) {
+    $old_result = $form_state['result'];
     // Save the result
     $result = array(
         'result_id' => $form_state['values']['result_id'],
@@ -315,6 +318,17 @@ function darts_competition_result_edit_submit($form, &$form_state) {
         );
         $key = array();
     }
+    // Update record from existing result
+    elseif (!empty($old_result)) {
+        // Remove old data from the record
+        $player['games_won'] -= ($old_result['home_legs'] > $old_result['away_legs']) ? 1 : 0;
+        $player['legs_played'] -= $old_result['home_legs'] + $old_result['away_legs'];
+        $player['legs_won'] -= $old_result['home_legs'];
+        // Update record with new data
+        $player['games_won'] += ($result['home_legs'] > $result['away_legs']) ? 1 : 0;
+        $player['legs_played'] += $result['home_legs'] + $result['away_legs'];
+        $player['legs_won'] += $result['home_legs'];
+    }
     // Update record
     else {
         $player['games_played'] += 1;
@@ -341,6 +355,17 @@ function darts_competition_result_edit_submit($form, &$form_state) {
             'legs_won' => $result['away_legs']
         );
         $key = array();
+    }
+    // Update record from existing result
+    elseif (!empty($old_result)) {
+        // Remove old data from the record
+        $player['games_won'] -= ($old_result['home_legs'] < $old_result['away_legs']) ? 1 : 0;
+        $player['legs_played'] -= $old_result['home_legs'] + $old_result['away_legs'];
+        $player['legs_won'] -= $old_result['away_legs'];
+        // Update record with new data
+        $player['games_won'] += ($result['home_legs'] < $result['away_legs']) ? 1 : 0;
+        $player['legs_played'] += $result['home_legs'] + $result['away_legs'];
+        $player['legs_won'] += $result['away_legs'];
     }
     // Update record
     else {
