@@ -165,23 +165,6 @@ function darts_competition_user($op, &$edit, &$account, $category = '') {
             $data = db_query('SELECT SUM(throw_100) AS throw_100, SUM(throw_140) AS throw_140, SUM(throw_180) AS throw_180 FROM {darts_competition_result_stats} WHERE uid = %d', $account->uid);
             $account->darts['competition'] = db_fetch_array($data);
             break;
-        // A user is being viewed
-        case 'view':
-            if (empty($account->darts['competition'])) break;
-
-            // Set the darts placeholder
-            if (empty($account->content['darts'])) {
-                $account->content['darts'] = array(
-                    '#type' => 'user_profile_category',
-                    '#title' => t('Darts')
-                );
-            }
-
-            $account->content['darts']['competition'] = array(
-                '#type' => 'user_profile_category',
-                '#title' => t('Competition statistics')
-            );
-            break;
         // A user is being deleted (always assume this is a player)
         case 'delete':
             $data = db_query('SELECT result_id FROM {darts_competition_results} WHERE home_uid = %d OR away_uid = %d', $account->uid, $account->uid);
