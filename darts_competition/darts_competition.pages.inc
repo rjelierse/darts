@@ -131,6 +131,10 @@ function darts_competition_statistics($type) {
             $rows = array();
 
             while(($record = db_fetch_array($data)) !== false) {
+                if ($record['throws'] == 0) {
+                    continue;
+                }
+                
                 $rows[] = array(
                     array('data' => $i++.'.', 'class' => 'numeric'),
                     theme('username', (object) $record),
