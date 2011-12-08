@@ -4,4 +4,4 @@ core = 6.x
 version = 6.x-1.0
 package = Darts
 project = darts
-project status url = http://home.sparse.nl/drupal/release-history
+project status url = http://dev.sparse.nl/release-history
