@@ -48,6 +48,8 @@ function darts_donhn_competition_confirm_reset_submit ($form, &$form_state) {
     db_query('TRUNCATE TABLE {darts_donhn_results}');
     db_query('TRUNCATE TABLE {darts_donhn_result_stats}');
 
+    watchdog('darts', 'DONHN competition reset.');
+
     drupal_set_message(t('DONHN competition reset.'));
     drupal_goto('admin/darts/donhn');
 }
@@ -389,6 +391,10 @@ function darts_donhn_team_edit_submit($form, &$form_state) {
     // Save the menu item
     menu_link_save($link);
 
+    if (empty($key)) {
+        watchdog('darts', 'DONHN team added: %name (division %division)', array('%name' => $update['team_name'], '%division' => $update['division']), WATCHDOG_NOTICE, l(t('view'), $path));
+    }
+
     drupal_set_message(t('Team was saved successfully.'));
     drupal_goto($path);
 }
@@ -520,6 +526,10 @@ function darts_donhn_result_edit_submit($form, &$form_state) {
         form_set_error('', t('Could not save the result.'));
     }
     else {
+        $team = darts_donhn_team_load($result['team_id']);
+        if (empty($key)) {
+            watchdog('darts', 'DOHNN result added: %team v %opponent', array('%team' => $team['team_name'], '%opponent' => $result['opponent_name']), WATCHDOG_NOTICE, l(t('view'), 'darts/donhn/' . $result['team_id'] . '/results/' . $result['result_id']));
+        }
         drupal_set_message('Result saved.');
         drupal_goto('darts/donhn/' . $result['team_id'] . '/results/' . $result['result_id']);
     }

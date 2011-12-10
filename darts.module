@@ -384,6 +384,9 @@ function darts_player_edit_submit($form, &$form_state) {
     
     $data['status'] = true;
     $data['password'] = user_password();
+    if (empty($data['mail'])) {
+        $data['mail'] = 'no-reply@mosquito-darts.nl';
+    }
 
     $account = user_save(null, $data);
     if ($account === false) {
@@ -398,6 +401,8 @@ function darts_player_edit_submit($form, &$form_state) {
     else {
         drupal_set_message(t('Created a new user account for <a href="@url">%name</a>. No e-mail has been sent.', array('@url' => url("user/$account->uid"), '%name' => $account->name)));
     }
+
+    watchdog('darts', 'New user: %name (%email).', array('%name' => $account->name, '%email' => $account->mail), WATCHDOG_NOTICE, l(t('edit'), 'user/' . $account->uid . '/edit'));
 
     drupal_goto('admin/darts/players');
 }

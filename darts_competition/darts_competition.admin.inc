@@ -380,6 +380,10 @@ function darts_competition_result_edit_submit($form, &$form_state) {
         drupal_set_message('Could not save ranking for player two.', 'error');
     }
 
+    if ($form_state['values']['result_id'] == 0) {
+        watchdog('darts', 'Competition result added', array(), WATCHDOG_NOTICE, l(t('view'), 'darts/competition/results/'.$result['result_id']));
+    }
+
     // Go to result
     drupal_set_message(t('Result saved.'));
     drupal_goto('darts/competition/results/'.$result['result_id']);
@@ -590,6 +594,8 @@ function darts_competition_confirm_restart_submit($form, &$form_state) {
     db_query('TRUNCATE TABLE {darts_competition_ranking}');
     db_query('TRUNCATE TABLE {darts_competition_result_stats}');
     db_query('TRUNCATE TABLE {darts_competition_result_unique_stats}');
+
+    watchdog('darts', 'Competition restarted.');
 
     drupal_set_message(t('Competition successfully restarted.'));
     drupal_goto('admin/darts/competition');
