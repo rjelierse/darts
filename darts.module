@@ -12,14 +12,6 @@
  */
 function darts_menu() {
     return array(
-        'darts' => array(
-            'title' => 'Home',
-            'description' => 'Darts frontpage.',
-            'access arguments' => array('access content'),
-            'page callback' => 'theme',
-            'page arguments' => array('darts_frontpage'),
-            'type' => MENU_CALLBACK
-        ),
         'admin/darts' => array(
             'title' => 'Darts',
             'description' => 'Administer one of the darts competitions.',
@@ -68,9 +60,6 @@ function darts_theme() {
     return array(
         'darts_admin_players' => array(
             'arguments' => array('form' => null)
-        ),
-        'darts_frontpage' => array(
-            'template' => 'frontpage'
         )
     );
 }
@@ -266,31 +255,6 @@ function darts_get_players ($include_empty = false) {
     }
 
     return $players;
-}
-
-function template_preprocess_darts_frontpage(&$variables) {
-    $blocks = array(
-        'views' => array('latest_news-block_1'),
-        'events' => array('upcoming'),
-        'darts_donhn' => array('results'),
-        'darts_competition' => array('ranking'),
-        'opengraph' => array('information'),
-    );
-
-    foreach ($blocks as $module => $deltas) {
-        foreach ($deltas as $delta) {
-            $data = module_invoke($module, 'block', 'view', $delta);
-            if ($data === false || empty($data['content'])) {
-                drupal_set_message(t('Failed to load block %block', array('%block' => $module.'-'.$delta)), 'warning');
-                continue;
-            }
-            $block = (object) $data;
-            $block->module = $module;
-            $block->delta = $delta;
-            $delta = str_replace('-','_', $delta);
-            $variables['block_'.$module.'_'.$delta] = theme('block', $block);
-        }
-    }
 }
 
 function darts_player_edit($form_state = array(), $player = null) {
