@@ -12,6 +12,7 @@ function darts_competition_uninstall() {
 
     // Remove variables
     variable_del('darts_competition_result_best_of');
+    variable_del('darts_competition_playday');
 }
 
 function darts_competition_schema() {

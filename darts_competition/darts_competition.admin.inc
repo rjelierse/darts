@@ -163,6 +163,9 @@ function darts_competition_result_player_fieldset($prefix, $result = array()) {
  * @return void Nothing.
  */
 function darts_competition_result_edit_validate($form, &$form_state) {
+    $timestamp = mktime(20, 0, 0, $form_state['values']['result_date']['month'], $form_state['values']['result_date']['day'], $form_state['values']['result_date']['year']);
+    $playday = variable_get('darts_competition_playday', 5);
+    $days = darts_get_days_map();
     if ($form_state['values']['home_uid'] == 0) {
         form_set_error('home][home_uid', t('You have not selected a player. Please select a player for the result.'));
     }
@@ -171,6 +174,9 @@ function darts_competition_result_edit_validate($form, &$form_state) {
     }
     elseif ($form_state['values']['home_uid'] == $form_state['values']['away_uid']) {
         form_set_error('home][home_uid', t('You have selected the same player for both options. Please correct the issue.'));
+    }
+    elseif (date('N', $timestamp) != $playday) {
+        form_set_error('result_date', t('The date you selected is not a %day', array('%day' => $days[$playday])));
     }
 }
 
@@ -458,6 +464,13 @@ function darts_competition_admin_settings($form_state) {
         '#title' => t('Match rules'),
         '#options' => $best_of_options,
         '#default_value' => variable_get('darts_competition_result_best_of', 5)
+    );
+
+    $form['darts_competition_playday'] = array(
+        '#type' => 'select',
+        '#title' => t('Day on which competition matches are played'),
+        '#options' => darts_get_days_map(),
+        '#default_value' => variable_get('darts_competition_playday', 5)
     );
 
     $form['darts_competition_reset'] = array(

@@ -3,8 +3,31 @@
  * Darts competition module.
  */
 
+/**
+ * Darts statistic: finish score.
+ */
 define('DARTS_STAT_FINISH', 1);
+
+/**
+ * Darts statistic: darts to finish.
+ */
 define('DARTS_STAT_DARTS', 2);
+
+/**
+ * @return array
+ *     Mapping function to map a translated name of the day to an index according to date().
+ */
+function darts_get_days_map() {
+    return array(
+        1 => t('Monday'),
+        2 => t('Tuesday'),
+        3 => t('Wednesday'),
+        4 => t('Thursday'),
+        5 => t('Friday'),
+        6 => t('Saturday'),
+        7 => t('Sunday')
+    );
+}
 
 /**
  * Implementation of hook_menu().
