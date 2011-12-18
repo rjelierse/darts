@@ -2,7 +2,16 @@
 /**
  * Darts DONHN competition module: Display functions.
  */
- 
+
+/**
+ * Team landing page. Shows the results and the current ranking.
+ *
+ * @param array $team
+ *     The team to display the results and ranking for.
+ *
+ * @return string
+ *     The rendered HTML.
+ */
 function darts_donhn_team_results($team) {
     $items = array();
     $ranking = darts_donhn_competition_get_ranking($team['division']);
@@ -108,6 +117,15 @@ function darts_donhn_team_results($team) {
     return drupal_render($items);
 }
 
+/**
+ * Team information page.
+ *
+ * @param array $team
+ *     The team to display the information for.
+ *
+ * @return string
+ *     The rendered HTML.
+ */
 function darts_donhn_team_information($team) {
     $captain = user_load($team['captain_uid']);
 
@@ -190,11 +208,28 @@ function darts_donhn_team_information($team) {
     return drupal_render($items);
 }
 
+/**
+ * Show statistics for the given team.
+ *
+ * @param array $team
+ *     The team that is being viewed.
+ *
+ * @return string
+ *     The rendered HTML.
+ *
+ * @todo Actually make this work.
+ */
 function darts_donhn_team_statistics ($team) {
     drupal_set_message(t('No statistics found.'));
     return '';
 }
 
+/**
+ * Show links to the defined DONHN teams.
+ *
+ * @return string
+ *     The rendered HTML.
+ */
 function darts_donhn_teams () {
     $data = db_query('SELECT team_id, team_name, division FROM {darts_donhn_teams} ORDER BY team_name ASC');
     if ($data === false) {

@@ -6,8 +6,11 @@
 /**
  * Prepare the result information for display in the template.
  *
- * @param $variables The variables that are passed to the template.
- * @return void Nothing.
+ * @param array $variables
+ *     The variables that are passed to the template.
+ * 
+ * @return void
+ *     Nothing.
  */
 function template_preprocess_darts_donhn_result (&$variables) {
     $variables['result_date'] = format_date($variables['result']['result_date'], 'custom', 'l j F Y');

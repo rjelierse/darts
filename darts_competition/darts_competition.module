@@ -14,6 +14,8 @@ define('DARTS_STAT_FINISH', 1);
 define('DARTS_STAT_DARTS', 2);
 
 /**
+ * Get a mapping for the date('N') return value, with translated strings.
+ *
  * @return array
  *     Mapping function to map a translated name of the day to an index according to date().
  */
@@ -30,7 +32,12 @@ function darts_get_days_map() {
 }
 
 /**
- * Implementation of hook_menu().
+ * Menu item hooks.
+ *
+ * @return array
+ *     Paths to add to the menu.
+ *
+ * @seealso hook_menu().
  */
 function darts_competition_menu() {
     return array(
@@ -169,7 +176,12 @@ function darts_competition_menu() {
 }
 
 /**
- * Implementation of hook_perm().
+ * Additional permission strings for the Competition module.
+ *
+ * @return array
+ *     The extra permissions to add.
+ *
+ * @seealso hook_perm().
  */
 function darts_competition_perm() {
     return array(
@@ -179,7 +191,18 @@ function darts_competition_perm() {
 }
 
 /**
- * Implementation of hook_user().
+ * Hook into Drupal's user system.
+ *
+ * @param string $op
+ *     The operation to perform on the user object.
+ * @param array $edit
+ *     Values entered when editing a user object.
+ * @param object $account
+ *     The user object.
+ * @param string $category
+ *     (optional) The category that is being edited.
+ *
+ * @seealso hook_user()
  */
 function darts_competition_user($op, &$edit, &$account, $category = '') {
     switch ($op) {
@@ -201,7 +224,12 @@ function darts_competition_user($op, &$edit, &$account, $category = '') {
 }
 
 /**
- * Implementation of hook_theme().
+ * Additional theme hooks.
+ *
+ * @return array
+ *     The theme hooks to add.
+ *
+ * @seealso hook_theme()
  */
 function darts_competition_theme() {
     return array(
@@ -221,7 +249,22 @@ function darts_competition_theme() {
 }
 
 /**
- * Implementation of hook_block().
+ * Additional blocks.
+ *
+ * @param string $op
+ *     The operation to perform.
+ * @param mixed $delta
+ *     The block identifier for the operation to perform.
+ * @param array $edit
+ *     Form values entered when configuring a block.
+ *
+ * @return array
+ *     When the operation is list, a list of blocks.
+ *     When the operation is view, the block content.
+ *
+ * @seealso hook_block()
+ *
+ * @todo Make the amount of players shown in the ranking configurable.
  */
 function darts_competition_block($op = 'list', $delta = 0, $edit = array()) {
     switch ($op) {
@@ -241,6 +284,15 @@ function darts_competition_block($op = 'list', $delta = 0, $edit = array()) {
     }
 }
 
+/**
+ * Available operations to perform on a Darts player.
+ *
+ * @param array $form_state
+ *     The state of the form.
+ *
+ * @return array
+ *     The operations that are available.
+ */
 function darts_competition_player_operations($form_state = array()) {
     if (user_access('administer local competition') === false) {
         return array();
@@ -254,6 +306,15 @@ function darts_competition_player_operations($form_state = array()) {
     );
 }
 
+/**
+ * Callback function for player operation 'remove-competition'.
+ *
+ * @param array $players
+ *     Array of players' uid to remove players from the competition.
+ *
+ * @return void
+ *     Nothing.
+ */
 function darts_competition_remove_players($players) {
     foreach ($players as $uid) {
         $edit = array();
@@ -269,7 +330,8 @@ function darts_competition_remove_players($players) {
  *
  * This block contains the current top 3 in the competition.
  *
- * @return array The block.
+ * @return array
+ *     The block content.
  */
 function darts_competition_block_ranking() {
     $block = array(
@@ -298,8 +360,11 @@ function darts_competition_block_ranking() {
 /**
  * Loader function for a competition result.
  *
- * @param int $result_id The unique ID of the result.
- * @return array|bool The result details, or false if the given $result_id did not give a result.
+ * @param int $result_id
+ *     The unique ID of the result.
+ *
+ * @return array|bool
+ *     The result details, or false if the given $result_id did not give a result.
  */
 function darts_competition_result_load($result_id) {
     if (!is_numeric($result_id)) {
@@ -347,8 +412,11 @@ function darts_competition_result_load($result_id) {
 /**
  * Build the page title for a given $result.
  *
- * @param array $result The result.
- * @return string The formatted title.
+ * @param array $result
+ *     The result.
+ *
+ * @return string
+ *     The formatted title.
  */
 function darts_competition_result_page_title($result) {
     return t('!home against !away', array('!home' => $result['home_name'], '!away' => $result['away_name']));
@@ -357,8 +425,11 @@ function darts_competition_result_page_title($result) {
 /**
  * Delete the given result from the database. Update the ranking accordingly.
  *
- * @param array|int $result The result to delete. You can also pass the result_id, this will automatically load the result.
- * @return void Nothing.
+ * @param array|int $result
+ *     The result to delete. You can also pass the result_id, this will automatically load the result.
+ *
+ * @return void
+ *     Nothing.
  */
 function darts_competition_result_delete($result) {
     if (is_numeric($result)) {
@@ -394,6 +465,17 @@ function darts_competition_result_delete($result) {
     db_query('DELETE FROM {darts_competition_results} WHERE result_id = %d', $result['result_id']);
 }
 
+/**
+ * Preprocessor for the competition result template.
+ *
+ * @param array $variables
+ *     The variables to pass to the template.
+ *
+ * @return void
+ *     Nothing.
+ *
+ * @todo Merge this template with the DONHN result template to the Darts module.
+ */
 function template_preprocess_darts_competition_result(&$variables) {
     $result = $variables['result'];
     
@@ -407,8 +489,11 @@ function template_preprocess_darts_competition_result(&$variables) {
 /**
  * Check if the player identified by the $uid is active in the local competition.
  * 
- * @param $uid The {users}.uid of the player to look up.
- * @return bool true if the player is active in the competition, false otherwise.
+ * @param int $uid
+ *     The {users}.uid of the player to look up.
+ *
+ * @return bool
+ *     True if the player is active in the competition, false otherwise.
  */
 function darts_competition_is_player($uid) {
     $data = db_query('SELECT uid FROM {darts_competition_ranking} WHERE uid = %d', $uid);

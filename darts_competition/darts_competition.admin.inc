@@ -6,9 +6,13 @@
 /**
  * Create the form to add or edit a result between two players.
  *
- * @param array $form_state The state of the form.
- * @param array $result The result to edit, or null if a new result is being created.
- * @return array The result edit form.
+ * @param array $form_state
+ *     The state of the form.
+ * @param array $result
+ *     The result to edit, or null if a new result is being created.
+ *
+ * @return array
+ *     The result edit form.
  */
 function darts_competition_result_edit($form_state, $result = array()) {
     $form = array();
@@ -57,11 +61,15 @@ function darts_competition_result_edit($form_state, $result = array()) {
 /**
  * Create the fieldset that contains the player data for a given result.
  *
- * @param string $prefix Prefix to use for player specific fields.
- * @param array $result The result for which the fieldset is created, or null.
- * @return array The fieldset built for the given prefix.
+ * @param string $prefix
+ *     Prefix to use for player specific fields.
+ * @param array $result
+ *     The result for which the fieldset is created, or null.
  *
- * @see darts_match_edit_form()
+ * @return array
+ *     The fieldset built for the given prefix.
+ *
+ * @seealso darts_match_edit_form()
  */
 function darts_competition_result_player_fieldset($prefix, $result = array()) {
     $limit = ceil(variable_get('darts_competition_result_best_of', 5) / 2);
@@ -158,9 +166,13 @@ function darts_competition_result_player_fieldset($prefix, $result = array()) {
  *
  * This checks if the players are two different, existing players and whether all numerical input is valid.
  *
- * @param $form The form.
- * @param $form_state The submitted form data.
- * @return void Nothing.
+ * @param array $form
+ *     The form.
+ * @param array $form_state
+ *     The submitted form data.
+ *
+ * @return void
+ *     Nothing.
  */
 function darts_competition_result_edit_validate($form, &$form_state) {
     $timestamp = mktime(20, 0, 0, $form_state['values']['result_date']['month'], $form_state['values']['result_date']['day'], $form_state['values']['result_date']['year']);
@@ -185,9 +197,13 @@ function darts_competition_result_edit_validate($form, &$form_state) {
  *
  * Prepare the submitted data to be entered into the database.
  *
- * @param $form The form.
- * @param $form_state The submitted form data.
- * @return void Nothing.
+ * @param array $form
+ *     The form.
+ * @param array $form_state
+ *     The submitted form data.
+ *
+ * @return void
+ *     Nothing.
  */
 function darts_competition_result_edit_submit($form, &$form_state) {
     $old_result = $form_state['result'];
@@ -398,8 +414,11 @@ function darts_competition_result_edit_submit($form, &$form_state) {
 /**
  * Theme function for the statistics fieldset.
  *
- * @param array $fieldset The fieldset.
- * @return string Generated HTML for the fieldset.
+ * @param array $fieldset
+ *     The fieldset.
+ *
+ * @return string
+ *     Generated HTML for the fieldset.
  */
 function theme_darts_competition_result_statistics_fieldset($fieldset) {
     $content = '';
@@ -449,8 +468,11 @@ function theme_darts_competition_result_statistics_fieldset($fieldset) {
 /**
  * Build the settings form for the local darts competition.
  *
- * @param array $form_state The form state.
- * @return array Forms API elements, passed through system_settings_form().
+ * @param array $form_state
+ *     The form state.
+ *
+ * @return array
+ *     Forms API elements, passed through system_settings_form().
  */
 function darts_competition_admin_settings($form_state) {
     $form = array();
@@ -485,8 +507,11 @@ function darts_competition_admin_settings($form_state) {
 /**
  * Results management form.
  *
- * @param array $form_state The form state.
- * @return array Forms API elements.
+ * @param array $form_state
+ *     The form state.
+ *
+ * @return array
+ *     Forms API elements.
  */
 function darts_competition_admin_results($form_state) {
     $form = array();
@@ -531,6 +556,17 @@ function darts_competition_admin_results($form_state) {
     return $form;
 }
 
+/**
+ * Validate the input on the result administration form.
+ *
+ * @param array $form
+ *     The form.
+ * @param array $form_state
+ *     The submitted form data.
+ *
+ * @return void
+ *     Nothing.
+ */
 function darts_competition_admin_results_validate($form, &$form_state) {
     $form_state['values']['results'] = array_filter($form_state['values']['results']);
     if (empty($form_state['values']['results'])) {
@@ -538,6 +574,17 @@ function darts_competition_admin_results_validate($form, &$form_state) {
     }
 }
 
+/**
+ * Process the validated input from the result administration form.
+ *
+ * @param array $form
+ *     The form.
+ * @param array $form_state
+ *     The submitted form data.
+ *
+ * @return void
+ *     Nothing.
+ */
 function darts_competition_admin_results_submit($form, &$form_state) {
     $form_state['values']['results'] = array_filter($form_state['values']['results']);
 
@@ -549,6 +596,15 @@ function darts_competition_admin_results_submit($form, &$form_state) {
     }
 }
 
+/**
+ * Theme the result administration form.
+ *
+ * @param array $form
+ *     The form.
+ *
+ * @return string
+ *     The rendered HTML.
+ */
 function theme_darts_competition_admin_results($form) {
     $header = array(
         theme('table_select_header_cell'),
@@ -584,10 +640,13 @@ function theme_darts_competition_admin_results($form) {
 /**
  * Confirmation page to restart the local darts competition.
  *
- * @seealso darts_competition_confirm_restart_submit().
+ * @param array $form_state
+ *     The form state.
  *
- * @param array $form_state The form state.
- * @return array Forms API elements generated by confirm_form().
+ * @return array
+ *     Forms API elements generated by confirm_form().
+ *
+ * @seealso darts_competition_confirm_restart_submit()
  */
 function darts_competition_confirm_restart($form_state) {
     return confirm_form(array(), t('Are you sure you want to restart the competition?'), 'admin/darts/competition');
@@ -598,9 +657,13 @@ function darts_competition_confirm_restart($form_state) {
  *
  * This function is the submit handler for darts_competition_confirm_restart().
  *
- * @param array $form The form.
- * @param array $form_state The form state.
- * @return void Nothing.
+ * @param array $form
+ *     The form.
+ * @param array $form_state
+ *     The form state.
+ *
+ * @return void
+ *     Nothing.
  */
 function darts_competition_confirm_restart_submit($form, &$form_state) {
     db_query('TRUNCATE TABLE {darts_competition_results}');

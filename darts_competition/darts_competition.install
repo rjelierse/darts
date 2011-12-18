@@ -3,10 +3,26 @@
  * Darts competition module: installation functions.
  */
 
+/**
+ * Install the schema for the Competition.
+ *
+ * @return void
+ *     Nothing
+ *
+ * @seealso hook_install()
+ */
 function darts_competition_install() {
     drupal_install_schema('darts_competition');
 }
 
+/**
+ * Remove the additions to the database and any variables set by the Competition module.
+ *
+ * @return void
+ *     Nothing
+ *
+ * @seealso hook_uninstall()
+ */
 function darts_competition_uninstall() {
     drupal_uninstall_schema('darts_competition');
 
@@ -15,6 +31,14 @@ function darts_competition_uninstall() {
     variable_del('darts_competition_playday');
 }
 
+/**
+ * Define the database structure for data storage for the Competition module.
+ * 
+ * @return array
+ *     The database schema to store data for the Competition module.
+ *
+ * @seealso hook_schema()
+ */
 function darts_competition_schema() {
     return array(
         'darts_competition_results' => array(

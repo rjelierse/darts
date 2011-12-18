@@ -6,8 +6,11 @@
 /**
  * Build the DONHN competition settings form and pass it through system_settings_form().
  *
- * @param $form_state The form state.
- * @return array The form.
+ * @param array $form_state
+ *     The form state.
+ *
+ * @return array
+ *     The form.
  */
 function darts_donhn_admin_settings($form_state) {
     $form = array();
@@ -34,6 +37,15 @@ function darts_donhn_admin_settings($form_state) {
     return system_settings_form($form);
 }
 
+/**
+ * Show the confirmation dialog before resetting the DONHN competition.
+ *
+ * @param array $form_state
+ *     The form state.
+ *
+ * @return array
+ *     The form.
+ */
 function darts_donhn_competition_confirm_reset($form_state) {
     $form = array();
     $form['extra'] = array(
@@ -42,6 +54,17 @@ function darts_donhn_competition_confirm_reset($form_state) {
     return confirm_form($form, t('Are you sure you want to reset the DONHN competition?'), 'admin/darts/donhn');
 }
 
+/**
+ * Callback when the DONHN competition reset is confirmed.
+ *
+ * @param array $form
+ *     The form.
+ * @param array $form_state
+ *     The form state.
+ *
+ * @return void
+ *     Nothing.
+ */
 function darts_donhn_competition_confirm_reset_submit ($form, &$form_state) {
     db_query('TRUNCATE TABLE {darts_donhn_teams}');
     db_query('TRUNCATE TABLE {darts_donhn_team_players}');
@@ -57,8 +80,11 @@ function darts_donhn_competition_confirm_reset_submit ($form, &$form_state) {
 /**
  * Build the administration page for managing the teams.
  *
- * @param $form_state The form state.
- * @return array The form.
+ * @param array $form_state
+ *     The form state.
+ *
+ * @return array
+ *     The form.
  */
 function darts_donhn_admin_teams($form_state) {
     $form = array();
@@ -101,8 +127,11 @@ function darts_donhn_admin_teams($form_state) {
 /**
  * Theme the team administration form.
  *
- * @param $form The team administration form.
- * @return string The rendered HTML.
+ * @param array $form
+ *     The form.
+ *
+ * @return string
+ *     The rendered HTML.
  */
 function theme_darts_donhn_admin_teams($form) {
     $header = array(
@@ -133,9 +162,13 @@ function theme_darts_donhn_admin_teams($form) {
 /**
  * Build the form for editing teams in the DONHN competition.
  *
- * @param array $form_state The form state.
- * @param array $team (optional) The team to edit.
- * @return array The form.
+ * @param array $form_state
+ *     The form state.
+ * @param array $team
+ *     (optional) The team to edit.
+ *
+ * @return array
+ *     The form.
  */
 function darts_donhn_team_edit($form_state, $team = array()) {
     $form = array();
@@ -318,6 +351,17 @@ function darts_donhn_team_edit($form_state, $team = array()) {
     return $form;
 }
 
+/**
+ * Validate the input from the team edit form.
+ *
+ * @param array $form
+ *     The form.
+ * @param array $form_state
+ *     The form state.
+ *
+ * @return void
+ *     Nothing.
+ */
 function darts_donhn_team_edit_validate($form, &$form_state) {
     $form_state['values']['players']['player_select'] = array_filter($form_state['values']['players']['player_select']);
     if (empty($form_state['values']['players']['player_select'])) {
@@ -331,9 +375,13 @@ function darts_donhn_team_edit_validate($form, &$form_state) {
 /**
  * Process the submitted data from the team edit form.
  *
- * @param $form The form.
- * @param $form_state The form state.
- * @return void Nothing.
+ * @param array $form
+ *     The form.
+ * @param array $form_state
+ *     The form state.
+ *
+ * @return void
+ *     Nothing.
  */
 function darts_donhn_team_edit_submit($form, &$form_state) {
     $fields = array('team_id', 'team_name', 'division', 'captain_uid', 'captain_mail', 'captain_phone', 'location_name', 'location_address', 'location_city', 'location_phone');
@@ -399,6 +447,15 @@ function darts_donhn_team_edit_submit($form, &$form_state) {
     drupal_goto($path);
 }
 
+/**
+ * Theme the fieldset that allows the selection of players that are part of the team.
+ *
+ * @param array $fields
+ *     The form fields to theme.
+ *
+ * @return string
+ *     The rendered HTML.
+ */
 function theme_darts_player_select_fieldset($fields) {
     $content = '';
     $rows = array();
@@ -423,12 +480,17 @@ function theme_darts_player_select_fieldset($fields) {
 /**
  * Build the form to edit a team result for the DONHN competition.
  *
- * @todo Add statistics.
+ * @param array $form_state
+ *     The form state.
+ * @param array $team
+ *     The team to edit.
+ * @param array $result
+ *     (optional) The results to edit.
  *
- * @param array $form_state The form state.
- * @param array $team The team to edit.
- * @param array $result (optional) The results to edit.
- * @return array The form.
+ * @return array
+ *     The form.
+ *
+ * @todo Add statistics.
  */
 function darts_donhn_result_edit($form_state, $team, $result = array()) {
     $form = array();
@@ -499,6 +561,17 @@ function darts_donhn_result_edit($form_state, $team, $result = array()) {
     return $form;
 }
 
+/**
+ * Validate the input from the result edit form.
+ *
+ * @param array $form
+ *     The form.
+ * @param array $form_state
+ *     The form state.
+ *
+ * @return void
+ *     Nothing.
+ */
 function darts_donhn_result_edit_validate($form, &$form_state) {
     if ($form_state['values']['team_name'] == $form_state['values']['opponent_name']) {
         form_set_error('result][opponent_name', t('The opposing team you selected is the same as the team for which you are trying to enter the result.'));
@@ -511,6 +584,17 @@ function darts_donhn_result_edit_validate($form, &$form_state) {
     }
 }
 
+/**
+ * Process the input from the result edit form.
+ * 
+ * @param array $form
+ *     The form.
+ * @param array $form_state
+ *     The form state.
+ *
+ * @return void
+ *     Nothing.
+ */
 function darts_donhn_result_edit_submit($form, &$form_state) {
     $fields = array('result_id', 'team_id', 'team_score', 'opponent_name', 'opponent_score', 'result_type');
 

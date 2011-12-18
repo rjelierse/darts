@@ -8,7 +8,10 @@
  *
  * The list is paginated, but cannot be filtered or sorted.
  *
- * @return string The rendered HTML.
+ * @return string
+ *     The rendered HTML.
+ *
+ * @todo Add filtering by date.
  */
 function darts_competition_results() {
     $data = pager_query("SELECT r.*, h.name AS home_name, a.name AS away_name
@@ -59,7 +62,8 @@ function darts_competition_results() {
  *
  * Ranking is create based on the the amount of games that have been won by player.
  *
- * @return string Rendered HTML.
+ * @return string
+ *     The rendered HTML.
  */
 function darts_competition_ranking() {
     $data = db_query("SELECT r.*, u.name FROM {darts_competition_ranking} r LEFT JOIN {users} u ON r.uid = u.uid ORDER BY games_won DESC, games_played ASC");
@@ -95,12 +99,14 @@ function darts_competition_ranking() {
     return theme_table($header, $rows);
 }
 
-
-
 /**
  * View the competition statistics.
  *
- * @return string The rendered HTML.
+ * @param string $type
+ *     The type of statistic to display.
+ *
+ * @return string
+ *     The rendered HTML.
  */
 function darts_competition_statistics($type) {
     $items = array();

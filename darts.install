@@ -2,7 +2,19 @@
 /**
  * Darts module: installation routines.
  */
- 
+
+/**
+ * Module installation.
+ *
+ * - Add the specific roles for a Darts club.
+ *
+ * @return void
+ *     Nothing.
+ *
+ * @seealso hook_install()
+ *
+ * @todo Split certain roles to their respective modules.
+ */
 function darts_install() {
     // Add club manager
     db_query("INSERT INTO {role} (name) VALUES ('%s')", t('Club manager'));
@@ -26,6 +38,14 @@ function darts_install() {
     db_query("INSERT INTO {permission} (rid, perm) VALUES (%d, 'edit own donhn team, delete own event, edit own events, create story content, delete own story content, edit own story content')", $rid);
 }
 
+/**
+ * Remove all data for the Darts module.
+ *
+ * @return void
+ *     Nothing.
+ *
+ * @seealso hook_uninstall()
+ */
 function darts_uninstall() {
     foreach(array('club_manager', 'competition_manager', 'donhn_manager', 'team_captain') as $suffix) {
         $rid = variable_get('darts_role_'.$suffix, false);
@@ -37,6 +57,14 @@ function darts_uninstall() {
     }
 }
 
+/**
+ * Add the specific roles for a Darts club.
+ *
+ * @return array
+ *     The return values for each query executed.
+ *
+ * @seealso hook_update_N()
+ */
 function darts_update_6000() {
     $ret = array();
 

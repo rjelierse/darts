@@ -14,7 +14,12 @@ define('DARTS_DONHN_RESULT_HOME', 1);
 define('DARTS_DONHN_RESULT_AWAY', 2);
 
 /**
- * Implementation of hook_menu().
+ * Menu item hooks.
+ *
+ * @return array
+ *     Paths to add to the menu.
+ *
+ * @seealso hook_menu().
  */
 function darts_donhn_menu() {
     return array(
@@ -173,7 +178,12 @@ function darts_donhn_menu() {
 }
 
 /**
- * Implementation of hook_theme().
+ * Additional theme hooks.
+ *
+ * @return array
+ *     The theme hooks to add.
+ *
+ * @seealso hook_theme()
  */
 function darts_donhn_theme() {
     return array(
@@ -193,7 +203,12 @@ function darts_donhn_theme() {
 }
 
 /**
- * Implementation of hook_perm().
+ * Additional permission strings for the DONHN Competition module.
+ *
+ * @return array
+ *     The extra permissions to add.
+ *
+ * @seealso hook_perm().
  */
 function darts_donhn_perm() {
     return array(
@@ -203,7 +218,18 @@ function darts_donhn_perm() {
 }
 
 /**
- * Implementation of hook_user().
+ * Hook into Drupal's user system.
+ *
+ * @param string $op
+ *     The operation to perform on the user object.
+ * @param array $edit
+ *     Values entered when editing a user object.
+ * @param object $account
+ *     The user object.
+ * @param string $category
+ *     (optional) The category that is being edited.
+ *
+ * @seealso hook_user()
  */
 function darts_donhn_user($op, &$edit, &$account, $category = '') {
     if ($op == 'delete') {
@@ -213,7 +239,20 @@ function darts_donhn_user($op, &$edit, &$account, $category = '') {
 }
 
 /**
- * Implementation of hook_block().
+ * Additional blocks.
+ *
+ * @param string $op
+ *     The operation to perform.
+ * @param mixed $delta
+ *     The block identifier for the operation to perform.
+ * @param array $edit
+ *     Form values entered when configuring a block.
+ *
+ * @return array
+ *     When the operation is list, a list of blocks.
+ *     When the operation is view, the block content.
+ *
+ * @seealso hook_block()
  */
 function darts_donhn_block($op = 'list', $delta = 0, $edit = array()) {
     switch ($op) {
@@ -238,7 +277,8 @@ function darts_donhn_block($op = 'list', $delta = 0, $edit = array()) {
  *
  * This block contains the latest result for each team.
  *
- * @return array The block.
+ * @return array
+ *     The block content.
  */
 function darts_donhn_block_results() {
     $block = array(
@@ -286,8 +326,11 @@ function darts_donhn_block_results() {
 /**
  * Loads team information for the team identified by $team_id.
  *
- * @param int $team_id The ID of the team to load.
- * @return array|bool An array with the team information or false if the team was not found.
+ * @param int $team_id
+ *     The ID of the team to load.
+ *
+ * @return array|bool
+ *     An array with the team information or false if the team was not found.
  */
 function darts_donhn_team_load($team_id) {
     if (!is_numeric($team_id)) {
@@ -312,8 +355,11 @@ function darts_donhn_team_load($team_id) {
 /**
  * Loads result information for the result identified by $result_id.
  *
- * @param int $result_id The ID of the result to load.
- * @return array|bool An array with the result information or false if the result was not found.
+ * @param int $result_id
+ *     The ID of the result to load.
+ *
+ * @return array|bool
+ *     An array with the result information or false if the result was not found.
  */
 function darts_donhn_result_load($result_id) {
     if (!is_numeric($result_id)) {
@@ -340,8 +386,11 @@ function darts_donhn_result_load($result_id) {
 /**
  * Format the page title for a team page.
  *
- * @param array $team The team that is being viewed.
- * @return string The page title.
+ * @param array $team
+ *     The team that is being viewed.
+ *
+ * @return string
+ *     The page title.
  */
 function darts_donhn_team_page_title($team) {
     return $team['team_name'];
@@ -350,9 +399,13 @@ function darts_donhn_team_page_title($team) {
 /**
  * Format the page title for a result page.
  *
- * @param array $team The team that set the result.
- * @param array $result The result that is being viewed.
- * @return string The page title.
+ * @param array $team
+ *     The team that set the result.
+ * @param array $result
+ *     The result that is being viewed.
+ *
+ * @return string
+ *     The page title.
  */
 function darts_donhn_result_page_title($team, $result) {
     return t('!team against !opponent', array('!team' => $team['team_name'], '!opponent' => $result['opponent_name']));
@@ -361,7 +414,8 @@ function darts_donhn_result_page_title($team, $result) {
 /**
  * Get a list of teams that are active in a DONHN competition.
  *
- * @return array|bool The list of teams, or false if something went wrong.
+ * @return array|bool
+ *     The list of teams, or false if something went wrong.
  */
 function darts_donhn_get_teams() {
     $data = db_query('SELECT team_id, team_name FROM {darts_donhn_teams} ORDER BY team_name ASC');
@@ -380,9 +434,13 @@ function darts_donhn_get_teams() {
 /**
  * Check if a player identified by the $uid is part of the team identified by $team.
  * 
- * @param array|int $team The team in which the player should come out.
- * @param int $uid The uid of the player to look up.
- * @return bool true if the player is on the team, false if otherwise.
+ * @param array|int $team
+ *     The team in which the player should be active.
+ * @param int $uid
+ *     The uid of the player to look up.
+ *
+ * @return bool
+ *     True if the player is on the team, false if otherwise.
  */
 function darts_donhn_team_is_player($team, $uid) {
     if (!is_array($team) && is_numeric($team)) {
@@ -408,8 +466,10 @@ function darts_donhn_team_is_player($team, $uid) {
  *  - The user can edit his own team,
  *  - the user can administer the DONHN competition.
  *
- * @param $team The team to edited.
- * @return bool true if the user has access, false if not.
+ * @param array $team
+ *     The team to edited.
+ * @return bool
+ *     True if the user has access, false if not.
  */
 function user_can_edit_donhn_team($team) {
     return (user_access('administer donhn competition') || (user_access('edit own donhn team') && darts_donhn_team_is_player($team, $GLOBALS['user'])));
@@ -430,7 +490,8 @@ define('DARTS_DONHN_COMPETITION_RESULT_URL', 'http://donhn.nl/login/competitiest
  *
  * The returned array is formatted so it can be used as an options array in a Forms API select.
  *
- * @return array List of divisions.
+ * @return array
+ *     List of divisions.
  */
 function darts_donhn_competition_get_divisions() {
     // Check the cache
@@ -472,8 +533,11 @@ function darts_donhn_competition_get_divisions() {
 /**
  * Get a list of teams that participate in a competition in the given DONHN division.
  *
- * @param string $division The division for which the teams should be selected.
- * @return array|bool An array of teams, or false if the division does not exist.
+ * @param string $division
+ *     The division for which the teams should be selected.
+ *
+ * @return array|bool
+ *     An array of teams, or false if the division does not exist.
  */
 function darts_donhn_competition_get_teams($division) {
     if (empty($division)) {
@@ -494,8 +558,11 @@ function darts_donhn_competition_get_teams($division) {
 /**
  * Retrieve the ranking for the division from the DONHN website.
  *
- * @param string $division The division to look up.
- * @return array|bool A rank ordered array with the team ranking.
+ * @param string $division
+ *     The division to look up.
+ *
+ * @return array|bool
+ *     A rank ordered array with the team ranking.
  */
 function darts_donhn_competition_get_ranking($division) {
     if (empty($division)) {
@@ -550,7 +617,11 @@ function darts_donhn_competition_get_ranking($division) {
 /**
  * Generate a list of operations that can be applied to a player.
  *
- * @return array List of player operations for DONHN teams.
+ * @param array $form_state
+ *     The form state.
+ *
+ * @return array
+ *     List of player operations for DONHN teams.
  *
  * @seealso hook_player_operations()
  */
@@ -590,9 +661,15 @@ function darts_donhn_player_operations($form_state = array()) {
 }
 
 /**
+ * Player operation callback for adding players to a team.
+ *
  * @param array $players
+ *     Array of UIDs for the players to add to the team.
  * @param int $team_id
- * @return void Nothing.
+ *     The team ID for the team to add the players to.
+ *
+ * @return void
+ *     Nothing.
  */
 function darts_donhn_team_add_players($players, $team_id) {
     foreach ($players as $uid) {
@@ -606,6 +683,17 @@ function darts_donhn_team_add_players($players, $team_id) {
     }
 }
 
+/**
+ * Player operation callback for removing players from a team.
+ *
+ * @param array $players
+ *     Array of UIDs for the players to remove from the team.
+ * @param int $team_id
+ *     The team ID for the team to remove the players from.
+ *
+ * @return void
+ *     Nothing.
+ */
 function darts_donhn_team_remove_players($players, $team_id) {
     foreach ($players as $uid) {
         db_query('DELETE FROM {darts_donhn_team_players} WHERE team_id = %d AND uid = %d', $team_id, $uid);

@@ -3,16 +3,40 @@
  * Darts DONHN competition module: Installation functions.
  */
 
+/**
+ * Install the data structures for the DONHN competition module.
+ *
+ * @return void
+ *     Nothing.
+ *
+ * @seealso hook_install()
+ */
 function darts_donhn_install() {
     drupal_install_schema('darts_donhn');
 }
 
+/**
+ * Remove the data structures for the DONHN competition module, the module cache and the variables.
+ *
+ * @return void
+ *     Nothing.
+ *
+ * @seealso hook_uninstall()
+ */
 function darts_donhn_uninstall() {
     drupal_uninstall_schema('darts_donhn');
     cache_clear_all('darts_donhn_', 'cache', TRUE);
     variable_del('darts_donhn_teams_cache_ttl');
 }
 
+/**
+ * Define the data structures for the DONHN competition module.
+ *
+ * @return array
+ *     The database schema.
+ *
+ * @seealso hook_schema()
+ */
 function darts_donhn_schema() {
     return array(
         'darts_donhn_teams' => array(
@@ -191,6 +215,16 @@ function darts_donhn_schema() {
     );
 }
 
+/**
+ * Incremental update from previous module state.
+ *
+ * - Adds the data structures to the database.
+ *
+ * @return array
+ *     Status for each step in the update process.
+ */
 function darts_donhn_update_6000 () {
+    $ret = array();
     drupal_install_schema('darts_donhn');
+    return $ret;
 }

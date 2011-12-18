@@ -1,14 +1,15 @@
 <?php
 /**
  * Darts module.
- *
- * @todo Add player management.
  */
 
 /**
- * Implementation of hook_menu().
+ * Add menu hooks for the Darts module functions.
  *
- * @return array Menu items.
+ * @return array
+ *     Menu items.
+ *
+ * @seealso hook_menu()
  */
 function darts_menu() {
     return array(
@@ -47,14 +48,24 @@ function darts_menu() {
 }
 
 /**
- * Implementation of hook_perm().
+ * Add permissions for the Darts module.
+ *
+ * @return array
+ *     Array of permission strings.
+ *
+ * @seealso hook_perm()
  */
 function darts_perm() {
     return array('administer darts players');
 }
 
 /**
- * Implementation of hook_theme().
+ * Add theme hooks for the Darts module.
+ *
+ * @return array
+ *     Array of theme hooks.
+ *
+ * @seealso hook_theme().
  */
 function darts_theme() {
     return array(
@@ -65,12 +76,35 @@ function darts_theme() {
 }
 
 /**
- * Implementation of hook_init().
+ * Perform actions when a page is loaded.
+ *
+ *  - Adds the Darts module stylesheet.
+ *
+ * @seealso hook_init().
  */
 function darts_init() {
     drupal_add_css(drupal_get_path('module', 'darts').'/darts.css');
 }
 
+/**
+ * Connect the Darts module to the core User module.
+ *
+ * @param string $op
+ *     The operation to perform.
+ * @param array $edit
+ *     Values submitted through the edit user form.
+ * @param object $account
+ *     The user account to perform an action on.
+ * @param string $category
+ *     The category, if any, on which the action is performed.
+ *
+ * @return array
+ *     If $op is categories, return the categories that this module defines.
+ *     If $op is form, return the edit form.
+ *     Else, return nothing.
+ *
+ * @seealso hook_user()
+ */
 function darts_user($op, &$edit, &$account, $category = '') {
     if ($op == 'categories') {
         return array(
@@ -101,7 +135,8 @@ function darts_user($op, &$edit, &$account, $category = '') {
  *
  * Displays a list of links to administrative functions.
  *
- * @return string Rendered HTML.
+ * @return string
+ *     The rendered HTML.
  */
 function darts_admin_page() {
     $item = menu_get_item('admin/darts');
@@ -109,6 +144,15 @@ function darts_admin_page() {
     return theme('admin_block_content', $content);
 }
 
+/**
+ * Administration form for the defined players.
+ *
+ * @param array $form_state
+ *     The form state.
+ *
+ * @return array
+ *     The form elements.
+ */
 function darts_admin_players($form_state) {
     $form = array();
     $players = array();
@@ -168,6 +212,17 @@ function darts_admin_players($form_state) {
     return $form;
 }
 
+/**
+ * Validation function for the submitted player administration form.
+ *
+ * @param array $form
+ *     The form elements.
+ * @param array $form_state
+ *     The form state.
+ *
+ * @return void
+ *     Nothing.
+ */
 function darts_admin_players_validate($form, &$form_state) {
     $form_state['values']['players'] = array_filter($form_state['values']['players']);
     if (empty($form_state['values']['players'])) {
@@ -178,6 +233,17 @@ function darts_admin_players_validate($form, &$form_state) {
     }
 }
 
+/**
+ * Handles the submitted player administration form after it has been validated.
+ *
+ * @param array $form
+ *     The form elements.
+ * @param $form_state
+ *     The form state.
+ *
+ * @return void
+ *     Nothing.
+ */
 function darts_admin_players_submit($form, &$form_state) {
     $actions = module_invoke_all('player_operations', $form_state);
     $action = $actions[$form_state['values']['action']];
@@ -192,6 +258,15 @@ function darts_admin_players_submit($form, &$form_state) {
     drupal_set_message(t('The selected action was successfully applied to the selected players.'));
 }
 
+/**
+ * Theme the player administration form.
+ *
+ * @param array $form
+ *     The form elements.
+ *
+ * @return string
+ *     The rendered form.
+ */
 function theme_darts_admin_players($form) {
     $header = array(
         theme('table_select_header_cell'),
@@ -238,8 +313,11 @@ function theme_darts_admin_players($form) {
 /**
  * Retrieves the list of (potential) players.
  *
- * @param bool $include_empty Include a placeholder item.
- * @return array List of players.
+ * @param bool $include_empty
+ *     Include a placeholder item.
+ *
+ * @return array
+ *     List of players.
  */
 function darts_get_players ($include_empty = false) {
     $data = db_query('SELECT uid, name FROM {users} WHERE uid > 1 ORDER BY name ASC');
@@ -257,6 +335,17 @@ function darts_get_players ($include_empty = false) {
     return $players;
 }
 
+/**
+ * Edit form for the darts category.
+ *
+ * @param array $form_state
+ *     The form state.
+ * @param object $player
+ *     (optional) The player to edit.
+ *
+ * @return array
+ *     The form elements.
+ */
 function darts_player_edit($form_state = array(), $player = null) {
     $form = array();
     $roles = array(
@@ -320,6 +409,17 @@ function darts_player_edit($form_state = array(), $player = null) {
     return $form;
 }
 
+/**
+ * Validate the submitted darts player edit form.
+ *
+ * @param array $form
+ *     The form elements.
+ * @param $form_state
+ *     The form state.
+ *
+ * @return void
+ *     Nothing.
+ */
 function darts_player_edit_validate($form, &$form_state) {
     if ($message = user_validate_name($form_state['values']['name'])) {
         form_set_error('name', $message);
@@ -340,6 +440,17 @@ function darts_player_edit_validate($form, &$form_state) {
     }
 }
 
+/**
+ * Parse the submitted darts player edit form, after it has been validated.
+ *
+ * @param array $form
+ *     The form elements.
+ * @param $form_state
+ *     The form state.
+ *
+ * @return void
+ *     Nothing.
+ */
 function darts_player_edit_submit($form, &$form_state) {
     $data = $form_state['values'];
     unset($data['uid']);
