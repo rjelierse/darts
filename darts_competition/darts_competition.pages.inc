@@ -171,8 +171,9 @@ function darts_competition_statistics($type) {
             $items[$stat_type]['#type'] = 'section';
             $items[$stat_type]['#attributes'] = array('class' => 'column');
             $header[2] = ($stat_type == DARTS_STAT_FINISH) ? t('Score') : t('Darts');
+            $order = ($stat_type == DARTS_STAT_FINISH) ? 'DESC' : 'ASC';
 
-            $data = db_query('SELECT s.uid, u.name, s.stat_value FROM {darts_competition_result_unique_stats} s LEFT JOIN {users} u ON s.uid = u.uid WHERE s.stat_type = %d ORDER BY s.stat_value DESC LIMIT 25', $stat_type);
+            $data = db_query("SELECT s.uid, u.name, s.stat_value FROM {darts_competition_result_unique_stats} s LEFT JOIN {users} u ON s.uid = u.uid WHERE s.stat_type = %d ORDER BY s.stat_value $order LIMIT 25", $stat_type);
             if ($data === false) {
                 $items[$stat_type]['#value'] = t('No statistics found');
                 continue;
